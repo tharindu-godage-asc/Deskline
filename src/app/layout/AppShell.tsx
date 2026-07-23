@@ -7,23 +7,44 @@
  * a consistent layout and styling.
  */
 
+import { type ReactNode } from "react";
+
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function AppShell({ children }: Props) {
   return (
-    <div className="app-shell">
-      <header className="header">
-        <h1>Deskline</h1>
+    <div className="min-h-screen">
+      <header
+        className="border-b"
+        style={{
+          background: "var(--color-surface)",
+          borderColor: "var(--color-border)",
+        }}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <h1 className="text-xl font-bold">
+            Deskline
+          </h1>
 
-        <div>
-          <button>🌙 Theme</button>
-          <button>Logout</button>
+          <div className="flex gap-2">
+            <button
+              className="rounded-md border px-3 py-2"
+            >
+              Theme
+            </button>
+
+            <button
+              className="rounded-md border px-3 py-2 bg-red-500 text-white hover:bg-red-600"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
-      <main>
+      <main className="mx-auto max-w-7xl p-6">
         {children}
       </main>
     </div>

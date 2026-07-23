@@ -9,7 +9,7 @@
  * selected request and support additional interactions.
  */
 
-import { requests } from "../../shared/fixtures/requests";
+import { requests } from "../../../shared/fixtures/requests";
 
 export function RequestDetail() {
   const request = requests[0];

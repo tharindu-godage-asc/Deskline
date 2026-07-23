@@ -9,7 +9,7 @@
  * request actions.
  */
 
-import { requests } from "../../shared/fixtures/requests";
+import { requests } from "../../../shared/fixtures/requests";
 
 export function RequestList() {
   return (

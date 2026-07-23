@@ -1,6 +1,6 @@
 import { AppShell } from "./app/layout/AppShell";
-import { RequestList } from "./features/components/RequestList";
-import { RequestDetail } from "./features/components/RequestDetails";
+import { RequestList } from "./features/requests/components/RequestList";
+import { RequestDetail } from "./features/requests/components/RequestDetails";
 
 function App() {
   return (
