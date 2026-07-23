@@ -10,23 +10,24 @@
  */
 
 import { requests } from "../../../shared/fixtures/requests";
+import { Card } from "../../../shared/ui/Card";
 
 export function RequestDetail() {
   const request = requests[0];
 
   return (
-    <section>
-      <h2>{request.title}</h2>
+    <Card>
+      <h2 className="mb-4 text-xl font-bold">
+        {request.title}
+      </h2>
 
-      <p>Status: {request.status}</p>
-
-      <p>Priority: {request.priority}</p>
-
-      <p>Category: {request.category}</p>
-
-      <p>Requester: John Smith</p>
-
-      <p>Assignee: Sarah Wilson</p>
-    </section>
+      <div className="space-y-2">
+        <p>Status: {request.status}</p>
+        <p>Priority: {request.priority}</p>
+        <p>Category: {request.category}</p>
+        <p>Requester: John Smith</p>
+        <p>Assignee: Sarah Wilson</p>
+      </div>
+    </Card>
   );
 }

@@ -10,22 +10,32 @@
  */
 
 import { requests } from "../../../shared/fixtures/requests";
+import { Card } from "../../../shared/ui/Card";
+import { StatusBadge } from "../../../shared/ui/StatusBadge";
 
 export function RequestList() {
   return (
-    <div>
-      <h2>Requests</h2>
+    <div className="space-y-3">
+      <h2 className="text-xl font-semibold">
+        Requests
+      </h2>
 
       {requests.map((request) => (
-        <div key={request.id}>
-          <h3>{request.title}</h3>
+        <Card key={request.id}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold">
+                {request.title}
+              </h3>
 
-          <p>{request.status}</p>
+              <p className="text-sm opacity-70">
+                {request.category} • {request.priority}
+              </p>
+            </div>
 
-          <p>{request.priority}</p>
-
-          <p>{request.category}</p>
-        </div>
+            <StatusBadge status={request.status} />
+          </div>
+        </Card>
       ))}
     </div>
   );
