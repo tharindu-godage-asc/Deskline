@@ -18,26 +18,6 @@ export type Category =
   | "facilities"
   | "access";
 
-export type UserRole =
-  | "requester"
-  | "technician"
-  | "admin";
-
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-};
-
-export type Message = {
-  id: string;
-  requestId: string;
-  authorId: string;
-  body: string;
-  createdAt: string;
-};
-
 export type Request = {
   id: string;
   title: string;

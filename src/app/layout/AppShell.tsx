@@ -8,12 +8,15 @@
  */
 
 import { type ReactNode } from "react";
+import { useTheme } from "../../shared/hooks/useTheme";
+import { Button } from "../../shared/ui/Button";
 
 type Props = {
   children: ReactNode;
 };
 
 export function AppShell({ children }: Props) {
+  const { theme, toggleTheme } = useTheme();
   return (
     <div className="min-h-screen">
       <header
@@ -29,11 +32,14 @@ export function AppShell({ children }: Props) {
           </h1>
 
           <div className="flex gap-2">
-            <button
-              className="rounded-md border px-3 py-2"
-            >
-              Theme
-            </button>
+            <Button
+                variant="secondary"
+                onClick={toggleTheme}
+              >
+                {theme === "dark"
+                  ? "Light"
+                  : "Dark"}
+              </Button>
 
             <button
               className="rounded-md border px-3 py-2 bg-red-500 text-white hover:bg-red-600"

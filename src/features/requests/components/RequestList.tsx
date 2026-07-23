@@ -9,18 +9,36 @@
  * request actions.
  */
 
+import { useState } from "react";
 import { requests } from "../../../shared/fixtures/requests";
 import { Card } from "../../../shared/ui/Card";
-import { StatusBadge } from "../../../shared/ui/StatusBadge";
+// import { StatusBadge } from "../../../shared/ui/StatusBadge";
+import { Badge } from "../../../shared/ui/Badge";
+import { statusColors } from "../../../shared/constants/badgeColors";
+import { filterRequests } from "../lib/filterRequests";
+import type { RequestFilters } from "../../../shared/types/filters";
 
 export function RequestList() {
+  const [filters, setFilters] =
+  useState<RequestFilters>({
+    search: "",
+    status: "all",
+    priority: "all",
+    category: "all",
+  });
+
+const filteredRequests =
+  filterRequests(
+    requests,
+    filters
+  );
   return (
     <div className="space-y-3">
       <h2 className="text-xl font-semibold">
         Requests
       </h2>
 
-      {requests.map((request) => (
+      {filteredRequests.map((request) => (
         <Card key={request.id}>
           <div className="flex items-center justify-between">
             <div>
@@ -33,7 +51,10 @@ export function RequestList() {
               </p>
             </div>
 
-            <StatusBadge status={request.status} />
+            {/* <StatusBadge status={request.status} /> */}
+            <Badge color={statusColors[request.status]}>
+              {request.status}
+            </Badge>
           </div>
         </Card>
       ))}

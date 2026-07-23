@@ -9,7 +9,9 @@
  * selected request and support additional interactions.
  */
 
+import { statusColors } from "../../../shared/constants/badgeColors";
 import { requests } from "../../../shared/fixtures/requests";
+import { Badge } from "../../../shared/ui/Badge";
 import { Card } from "../../../shared/ui/Card";
 
 export function RequestDetail() {
@@ -17,16 +19,73 @@ export function RequestDetail() {
 
   return (
     <Card>
-      <h2 className="mb-4 text-xl font-bold">
-        {request.title}
-      </h2>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm text-gray-500">
+              Request ID: {request.id}
+            </p>
 
-      <div className="space-y-2">
-        <p>Status: {request.status}</p>
-        <p>Priority: {request.priority}</p>
-        <p>Category: {request.category}</p>
-        <p>Requester: John Smith</p>
-        <p>Assignee: Sarah Wilson</p>
+            <h2 className="mt-1 text-2xl font-bold text-gray-900">
+              {request.title}
+            </h2>
+          </div>
+
+          <Badge color={statusColors[request.status]}>
+            {request.status}
+          </Badge>
+        </div>
+
+        {/* Request Information */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border p-4">
+            <p className="text-sm text-gray-500">
+              Priority
+            </p>
+            <p className="mt-1 font-medium capitalize">
+              {request.priority}
+            </p>
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <p className="text-sm text-gray-500">
+              Category
+            </p>
+            <p className="mt-1 font-medium capitalize">
+              {request.category}
+            </p>
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <p className="text-sm text-gray-500">
+              Requester
+            </p>
+            <p className="mt-1 font-medium">
+              {request.requesterId}
+            </p>
+          </div>
+
+          <div className="rounded-lg border p-4">
+            <p className="text-sm text-gray-500">
+              Assignee
+            </p>
+            <p className="mt-1 font-medium">
+              {request.assigneeId}
+            </p>
+          </div>
+        </div>
+
+        {/* Timeline */}
+        <div className="border-t pt-4">
+          <p className="text-sm text-gray-500">
+            Created At
+          </p>
+
+          <p className="mt-1 text-sm">
+            {request.createdAt}
+          </p>
+        </div>
       </div>
     </Card>
   );

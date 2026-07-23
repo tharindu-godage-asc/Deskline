@@ -19,6 +19,15 @@
   --status-pending: #eab308;
   --status-closed: #3b82f6;
   --status-cancelled: #ef4444;
+
+  --priority-low: #22c55e;
+  --priority-medium: #f59e0b;
+  --priority-high: #ef4444;
+
+  --category-hardware: #3b82f6;
+  --category-software: #8b5cf6;
+  --category-facilities: #14b8a6;
+  --category-access: #ec4899;
 }
 
 [data-theme="dark"] {
