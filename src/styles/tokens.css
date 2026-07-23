@@ -1,0 +1,44 @@
+/**
+ * Step 2: Global design tokens for the Deskline application.
+ *
+ * CSS custom properties define the application's color palette,
+ * spacing, and border radius values in a centralized location.
+ * This approach provides consistent styling across components
+ * and simplifies theme switching by overriding only the necessary
+ * variables for light and dark modes.
+ */
+
+:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-border: #e2e8f0;
+  --color-accent: #2563eb;
+
+  --status-open: #22c55e;
+  --status-pending: #eab308;
+  --status-closed: #3b82f6;
+  --status-cancelled: #ef4444;
+
+  --priority-low: #22c55e;
+  --priority-medium: #f59e0b;
+  --priority-high: #ef4444;
+
+  --category-hardware: #3b82f6;
+  --category-software: #8b5cf6;
+  --category-facilities: #14b8a6;
+  --category-access: #ec4899;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #f8fafc;
+  --color-border: #334155;
+  --color-accent: #60a5fa;
+
+  --status-open: #4ade80;
+  --status-pending: #facc15;
+  --status-closed: #60a5fa;
+  --status-cancelled: #f87171;
+}
