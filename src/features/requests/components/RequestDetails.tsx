@@ -9,13 +9,12 @@
  * selected request and support additional interactions.
  */
 
-import { statusColors } from "../../../shared/constants/badgeColors";
 import { requests } from "../../../shared/fixtures/requests";
-import { Badge } from "../../../shared/ui/Badge";
+import { Badge } from "../../../shared/ui/badge/Badge";
 import { Card } from "../../../shared/ui/Card";
 
 export function RequestDetail() {
-  const request = requests[0];
+  const request = requests[1];
 
   return (
     <Card>
@@ -32,7 +31,7 @@ export function RequestDetail() {
             </h2>
           </div>
 
-          <Badge color={statusColors[request.status]}>
+          <Badge variant={request.status}>
             {request.status}
           </Badge>
         </div>

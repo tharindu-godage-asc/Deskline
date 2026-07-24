@@ -12,9 +12,7 @@
 import { useState } from "react";
 import { requests } from "../../../shared/fixtures/requests";
 import { Card } from "../../../shared/ui/Card";
-// import { StatusBadge } from "../../../shared/ui/StatusBadge";
-import { Badge } from "../../../shared/ui/Badge";
-import { statusColors } from "../../../shared/constants/badgeColors";
+import { Badge } from "../../../shared/ui/badge/Badge";
 import { filterRequests } from "../lib/filterRequests";
 import type { RequestFilters } from "../../../shared/types/filters";
 
@@ -52,7 +50,7 @@ const filteredRequests =
             </div>
 
             {/* <StatusBadge status={request.status} /> */}
-            <Badge color={statusColors[request.status]}>
+            <Badge variant={request.status}>
               {request.status}
             </Badge>
           </div>
