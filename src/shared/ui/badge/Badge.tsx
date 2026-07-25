@@ -2,7 +2,7 @@ import { type HTMLAttributes } from "react";
 import { type VariantProps } from "class-variance-authority";
 
 import { badgeVariants } from "./badge.variants";
-import { cn } from "../../../features/requests/lib/cn";
+import { cn } from "../../lib/cn";
 
 type BadgeProps =
   HTMLAttributes<HTMLSpanElement> &
