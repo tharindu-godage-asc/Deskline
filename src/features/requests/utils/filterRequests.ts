@@ -1,33 +1,33 @@
-import type { Request } from "../../../shared/types";
-import type { RequestFilters } from "../../../shared/types/filters";
+import { type Request } from "../../../shared/types/index";
+import { type RequestFilters } from "../../../shared/types/filters";
 
 export function filterRequests(
   requests: Request[],
   filters: RequestFilters
 ) {
   return requests.filter((request) => {
-    const searchMatch =
+    const matchesSearch =
       request.title
         .toLowerCase()
         .includes(filters.search.toLowerCase());
 
-    const statusMatch =
+    const matchesStatus =
       filters.status === "all" ||
       request.status === filters.status;
 
-    const priorityMatch =
+    const matchesPriority =
       filters.priority === "all" ||
       request.priority === filters.priority;
 
-    const categoryMatch =
+    const matchesCategory =
       filters.category === "all" ||
       request.category === filters.category;
 
     return (
-      searchMatch &&
-      statusMatch &&
-      priorityMatch &&
-      categoryMatch
+      matchesSearch &&
+      matchesStatus &&
+      matchesPriority &&
+      matchesCategory
     );
   });
 }

@@ -9,14 +9,15 @@
  * selected request and support additional interactions.
  */
 
-import { statusColors } from "../../../shared/constants/badgeColors";
 import { requests } from "../../../shared/fixtures/requests";
-import { Badge } from "../../../shared/ui/Badge";
+import { Badge } from "../../../shared/ui/badge/Badge";
 import { Card } from "../../../shared/ui/Card";
 
-export function RequestDetail() {
-  const request = requests[0];
+interface Props {
+  request: (typeof requests)[number];
+}
 
+export function RequestDetail({ request }: Props) {
   return (
     <Card>
       <div className="space-y-6">
@@ -32,7 +33,7 @@ export function RequestDetail() {
             </h2>
           </div>
 
-          <Badge color={statusColors[request.status]}>
+          <Badge variant={request.status}>
             {request.status}
           </Badge>
         </div>

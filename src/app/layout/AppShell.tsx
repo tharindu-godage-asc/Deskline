@@ -9,7 +9,7 @@
 
 import { type ReactNode } from "react";
 import { useTheme } from "../../shared/hooks/useTheme";
-import { Button } from "../../shared/ui/Button";
+import { Button } from "../../shared/ui/button/Button";
 
 type Props = {
   children: ReactNode;
@@ -33,19 +33,19 @@ export function AppShell({ children }: Props) {
 
           <div className="flex gap-2">
             <Button
-                variant="secondary"
-                onClick={toggleTheme}
-              >
-                {theme === "dark"
-                  ? "Light"
-                  : "Dark"}
-              </Button>
+              variant="secondary"
+              size="md"
+              onClick={toggleTheme}
+            >
+              {theme === "dark" ? "Light" : "Dark"}
+            </Button>
 
-            <button
-              className="rounded-md border px-3 py-2 bg-red-500 text-white hover:bg-red-600"
+            <Button
+              variant="danger"
+              size="md"
             >
               Logout
-            </button>
+            </Button>
           </div>
         </div>
       </header>
