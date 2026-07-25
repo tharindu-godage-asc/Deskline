@@ -1,22 +1,4 @@
-import {
-  type Status,
-  type Priority,
-  type Category,
-} from "../types";
-
-export type RequestFilters = {
-  search: string;
-  status: Status | "all";
-  priority: Priority | "all";
-  category: Category | "all";
-};
-
-type Option<T extends string> = {
-  value: T | "all";
-  label: string;
-};
-
-export const statusOptions: Option<Status>[] = [
+export const STATUS_OPTIONS = [
   { value: "all", label: "All Statuses" },
   { value: "open", label: "Open" },
   { value: "pending", label: "Pending" },
@@ -24,14 +6,14 @@ export const statusOptions: Option<Status>[] = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-export const priorityOptions: Option<Priority>[] = [
+export const PRIORITY_OPTIONS = [
   { value: "all", label: "All Priorities" },
   { value: "low", label: "Low" },
   { value: "medium", label: "Medium" },
   { value: "high", label: "High" },
 ];
 
-export const categoryOptions: Option<Category>[] = [
+export const CATEGORY_OPTIONS = [
   { value: "all", label: "All Categories" },
   { value: "hardware", label: "Hardware" },
   { value: "software", label: "Software" },

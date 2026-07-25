@@ -9,34 +9,24 @@
  * request actions.
  */
 
-import { useState } from "react";
-import { requests } from "../../../shared/fixtures/requests";
+import type { Request } from "../../../shared/types";
 import { Card } from "../../../shared/ui/Card";
 import { Badge } from "../../../shared/ui/badge/Badge";
-import { filterRequests } from "../lib/filterRequests";
-import type { RequestFilters } from "../../../shared/types/filters";
 
-export function RequestList() {
-  const [filters, setFilters] =
-  useState<RequestFilters>({
-    search: "",
-    status: "all",
-    priority: "all",
-    category: "all",
-  });
+type Props = {
+  requests: Request[];
+};
 
-const filteredRequests =
-  filterRequests(
-    requests,
-    filters
-  );
+export function RequestList({
+  requests,
+}: Props) {
   return (
     <div className="space-y-3">
       <h2 className="text-xl font-semibold">
         Requests
       </h2>
 
-      {filteredRequests.map((request) => (
+      {requests.map((request) => (
         <Card key={request.id}>
           <div className="flex items-center justify-between">
             <div>
@@ -49,7 +39,6 @@ const filteredRequests =
               </p>
             </div>
 
-            {/* <StatusBadge status={request.status} /> */}
             <Badge variant={request.status}>
               {request.status}
             </Badge>

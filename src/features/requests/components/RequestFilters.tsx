@@ -1,6 +1,12 @@
 import { Field } from "../../../shared/ui/Field";
 import { Input } from "../../../shared/ui/Input";
-import { Select } from "../../../shared/ui/Select";
+import { SelectFilter } from "../../../shared/ui/SelectFilter";
+
+import {
+  STATUS_OPTIONS,
+  PRIORITY_OPTIONS,
+  CATEGORY_OPTIONS,
+} from "../../../shared/constants/requestFilterOptions";
 
 import type { RequestFilters as RequestFiltersType } from "../../../shared/types/filters";
 
@@ -15,20 +21,13 @@ export function RequestFilters({
 }: Props) {
   return (
     <div
-      className="
-        grid
-        gap-4
-        rounded-xl
-        border
-        p-4
-        md:grid-cols-2
-        lg:grid-cols-4
-      "
+      className="grid gap-4 rounded-xl border p-4 md:grid-cols-2 lg:grid-cols-4"
       style={{
         backgroundColor: "var(--color-surface)",
         borderColor: "var(--color-border)",
       }}
     >
+      {/* Search */}
       <Field label="Search">
         <Input
           placeholder="Search by title..."
@@ -42,58 +41,44 @@ export function RequestFilters({
         />
       </Field>
 
-      <Field label="Status">
-        <Select
-          value={filters.status}
-          onChange={(e) =>
-            onChange({
-              ...filters,
-              status: e.target.value as RequestFiltersType["status"],
-            })
-          }
-        >
-          <option value="all">All Statuses</option>
-          <option value="open">Open</option>
-          <option value="pending">Pending</option>
-          <option value="closed">Closed</option>
-          <option value="cancelled">Cancelled</option>
-        </Select>
-      </Field>
+      {/* Status */}
+      <SelectFilter
+        label="Status"
+        value={filters.status}
+        options={STATUS_OPTIONS}
+        onChange={(status) =>
+          onChange({
+            ...filters,
+            status: status as RequestFiltersType["status"],
+          })
+        }
+      />
 
-      <Field label="Priority">
-        <Select
-          value={filters.priority}
-          onChange={(e) =>
-            onChange({
-              ...filters,
-              priority: e.target.value as RequestFiltersType["priority"],
-            })
-          }
-        >
-          <option value="all">All Priorities</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </Select>
-      </Field>
+      {/* Priority */}
+      <SelectFilter
+        label="Priority"
+        value={filters.priority}
+        options={PRIORITY_OPTIONS}
+        onChange={(priority) =>
+          onChange({
+            ...filters,
+            priority: priority as RequestFiltersType["priority"],
+          })
+        }
+      />
 
-      <Field label="Category">
-        <Select
-          value={filters.category}
-          onChange={(e) =>
-            onChange({
-              ...filters,
-              category: e.target.value as RequestFiltersType["category"],
-            })
-          }
-        >
-          <option value="all">All Categories</option>
-          <option value="hardware">Hardware</option>
-          <option value="software">Software</option>
-          <option value="facilities">Facilities</option>
-          <option value="access">Access</option>
-        </Select>
-      </Field>
+      {/* Category */}
+      <SelectFilter
+        label="Category"
+        value={filters.category}
+        options={CATEGORY_OPTIONS}
+        onChange={(category) =>
+          onChange({
+            ...filters,
+            category: category as RequestFiltersType["category"],
+          })
+        }
+      />
     </div>
   );
 }

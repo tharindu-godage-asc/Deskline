@@ -13,9 +13,11 @@ import { requests } from "../../../shared/fixtures/requests";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import { Card } from "../../../shared/ui/Card";
 
-export function RequestDetail() {
-  const request = requests[1];
+interface Props {
+  request: (typeof requests)[number];
+}
 
+export function RequestDetail({ request }: Props) {
   return (
     <Card>
       <div className="space-y-6">
