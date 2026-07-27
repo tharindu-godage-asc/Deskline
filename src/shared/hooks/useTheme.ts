@@ -1,41 +1,20 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect, useState} from "react";
 
 type Theme =
   | "light"
   | "dark";
 
 export function useTheme() {
-  const [theme, setTheme] =
-    useState<Theme>("light");
-
-  useEffect(() => {
-    const saved =
-      localStorage.getItem("theme");
-
-    if (saved === "dark") {
-      setTheme("dark");
-      return;
-    }
-
-    if (saved === "light") {
-      setTheme("light");
-      return;
-    }
-
-    const prefersDark =
-      window.matchMedia(
+  const [theme, setTheme] = useState<Theme>(() => {
+      const saved =
+      localStorage.getItem("theme") as Theme | null;
+      if (saved) {
+        return saved;
+      }
+      return window.matchMedia(
         "(prefers-color-scheme: dark)"
-      ).matches;
-
-    setTheme(
-      prefersDark
-        ? "dark"
-        : "light"
-    );
-  }, []);
+      ).matches ? "dark": "light";
+    });
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -49,13 +28,16 @@ export function useTheme() {
     );
   }, [theme]);
 
+  const toggleTheme = () => {
+    setTheme((prev) =>
+      prev === "light"
+        ? "dark"
+        : "light"
+    );
+  };
+
   return {
     theme,
-    toggleTheme: () =>
-      setTheme((prev) =>
-        prev === "light"
-          ? "dark"
-          : "light"
-      ),
+    toggleTheme,
   };
 }
