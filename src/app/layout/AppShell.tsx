@@ -19,11 +19,6 @@ type Props = {
   children: ReactNode;
 };
 
-const handleLogout = () => {
-  localStorage.clear();
-  router.navigate("/login");
-};
-
 export function AppShell({ children }: Props) {
   const { theme, toggleTheme } = useTheme();
   const {
@@ -33,7 +28,12 @@ export function AppShell({ children }: Props) {
 
 console.log("This is getCurrentUser",getCurrentUser());
 
-const { currentUser } = useAuth();
+const { currentUser, logout } = useAuth();
+
+const handleLogout = () => {
+  logout();
+  router.navigate("/login");
+};
 
 console.log("This is CurrentUser",getCurrentUser());
 
