@@ -12,26 +12,26 @@ import type {
   User
 } from "../types";
 
-export const users: User[] = [
-  {
-    id: "u1",
-    name: "John Smith",
-    email: "john@test.com",
-    role: "requester",
-  },
-  {
-    id: "u2",
-    name: "Sarah Wilson",
-    email: "sarah@test.com",
-    role: "technician",
-  },
-  {
-    id: "u3",
-    name: "Mike Admin",
-    email: "admin@test.com",
-    role: "admin",
-  },
-];
+// export const users: User[] = [
+//   {
+//     id: "u1",
+//     name: "John Smith",
+//     email: "john@test.com",
+//     role: "requester",
+//   },
+//   {
+//     id: "u2",
+//     name: "Sarah Wilson",
+//     email: "sarah@test.com",
+//     role: "technician",
+//   },
+//   {
+//     id: "u3",
+//     name: "Mike Admin",
+//     email: "admin@test.com",
+//     role: "admin",
+//   },
+// ];
 
 export const requests: Request[] = [
   {
@@ -40,7 +40,7 @@ export const requests: Request[] = [
     status: "open",
     priority: "high",
     category: "hardware",
-    requesterId: "user-1",
+    requesterId: "user-4",
     assigneeId: "user-3",
     createdAt: "2025-07-22",
     updatedAt: "2025-07-22",

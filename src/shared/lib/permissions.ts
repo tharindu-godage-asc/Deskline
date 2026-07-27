@@ -62,9 +62,14 @@ export function canAssignToMe(
 }
 
 export function canCloseRequest(
-  role: UserRole
+  role: UserRole,
+  status: Status
 ) {
-  return role === "admin";
+  return (
+    role === "admin" &&
+    (status === "open" ||
+      status === "pending")
+  );
 }
 
 export function canReassign(
@@ -86,3 +91,35 @@ export function canCancelRequest(
   );
 }
 
+export function canComment(
+  role: UserRole,
+  requesterId: string,
+  currentUserId: string,
+  status: Status
+) {
+  const canAccessRequest =
+    role === "technician" ||
+    role === "admin" ||
+    requesterId === currentUserId;
+
+  const canAddComment =
+    status === "open" ||
+    status === "pending";
+
+  return (
+    canAccessRequest &&
+    canAddComment
+  );
+}
+
+export function canViewRequest(
+  role: UserRole,
+  requesterId: string,
+  currentUserId: string
+) {
+  return (
+    role === "admin" ||
+    role === "technician" ||
+    requesterId === currentUserId
+  );
+}

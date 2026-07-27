@@ -14,7 +14,9 @@ import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { useAuth } from "../../../shared/context/AuthContext";
-import { canCancelRequest, canAssignToMe, canSetPending } from "../../../shared/lib/permissions";
+import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
+import { useState } from "react";
+import { users } from "../../../shared/api/auth";
 
 
 interface Props {
@@ -22,7 +24,28 @@ interface Props {
 }
 
 export function RequestDetail({ request }: Props) {
+  const [selectedAssignee, setSelectedAssignee] =
+  useState("");
+
   const { currentUser } = useAuth();
+
+  if (
+      currentUser &&
+      !canViewRequest(
+        currentUser.role,
+        request.requesterId,
+        currentUser.id
+      )
+    ) {
+      return (
+        <Card>
+          <p className="text-red-500">
+            You do not have permission to view this request.
+          </p>
+        </Card>
+      );
+    }
+
   return (
     <Card>
       <div className="space-y-6">
@@ -122,9 +145,89 @@ export function RequestDetail({ request }: Props) {
                         Set Pending
                       </Button>
                     )}
+
+                    {currentUser &&
+                      canCloseRequest(
+                        currentUser.role,
+                        request.status
+                      ) && (
+                        <Button variant="danger">
+                          Close Request
+                        </Button>
+                      )}
+
+                      {currentUser &&
+                        canReassign(
+                          currentUser.role
+                        ) && (
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={selectedAssignee}
+                              onChange={(e) =>
+                                setSelectedAssignee(
+                                  e.target.value
+                                )
+                              }
+                              className="rounded-md border px-3 py-2"
+                            >
+                              <option value="">
+                                Select Assignee
+                              </option>
+
+                              {users
+                                .filter((user) => user.id !== request.assigneeId)
+                                .map((user) => (
+                                  <option
+                                    key={user.id}
+                                    value={user.id}
+                                  >
+                                    {user.name}
+                                  </option>
+                                ))}
+                            </select>
+
+                            <Button>
+                              Reassign
+                            </Button>
+                          </div>
+                        )}
               </div>
             </div>
           </div>
+
+
+          {/*Comments Section */}
+      <div className="border-t pt-4">
+        <h3 className="mb-3 font-semibold">
+          Comments
+        </h3>
+
+          {currentUser &&
+            canComment(
+              currentUser.role,
+              request.requesterId,
+              currentUser.id,
+              request.status
+            ) ? (
+              <div className="space-y-3">
+                <textarea
+                  className="w-full rounded-md border p-3"
+                  rows={4}
+                  placeholder="Add a comment..."
+                />
+
+                <Button>
+                  Add Comment
+                </Button>
+              </div>
+            ) : (
+              <p className="text-sm opacity-70">
+                Comments are disabled because this request
+                is closed or you do not have permission to
+                comment on it.
+              </p>
+            )}
+        </div>
 
         {/* Timeline */}
         <div className="border-t pt-4">
