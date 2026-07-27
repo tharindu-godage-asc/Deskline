@@ -13,6 +13,7 @@ import { Button } from "../../shared/ui/button/Button";
 import { router } from "../router";
 import { getCurrentUser } from "../../shared/api/auth";
 import { useMotion } from "../../shared/hooks/useMotion";
+import { useAuth } from "../../shared/context/AuthContext";
 
 type Props = {
   children: ReactNode;
@@ -32,7 +33,7 @@ export function AppShell({ children }: Props) {
 
 console.log("This is getCurrentUser",getCurrentUser());
 
-const currentUser = getCurrentUser();
+const { currentUser } = useAuth();
 
 console.log("This is CurrentUser",getCurrentUser());
 

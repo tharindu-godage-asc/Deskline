@@ -3,6 +3,7 @@ import {
   getCurrentUser,
   users,
 } from "../../shared/api/auth";
+import { useAuth } from "../../shared/context/AuthContext";
 
 type LoginData = {
   email: string;
@@ -11,7 +12,7 @@ type LoginData = {
 
 export function useLogin() {
 
-  const currentUser = getCurrentUser(); 
+  const { login: loginUser } = useAuth(); 
   const login = ({
     email,
     password,
@@ -59,10 +60,7 @@ export function useLogin() {
       };
     }
 
-    localStorage.setItem(
-    "currentUser",
-    JSON.stringify(user)
-    );
+    loginUser(user);
 
     if (
       user.role === "requester"

@@ -7,12 +7,20 @@ type Props = {
   children: React.ReactNode;
 };
 
-const currentUser = getCurrentUser();
-
 export function RoleRedirect({
   allowed,
   children,
 }: Props) {
+  const currentUser = getCurrentUser();
+
+    if (!currentUser) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
   if (!allowed.includes(currentUser.role as UserRole)) {
     const redirectPath =
       currentUser.role === "requester"
@@ -29,3 +37,4 @@ export function RoleRedirect({
 
   return <>{children}</>;
 }
+
