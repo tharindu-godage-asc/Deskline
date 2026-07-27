@@ -11,7 +11,7 @@ import { type ReactNode } from "react";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { Button } from "../../shared/ui/button/Button";
 import { router } from "../router";
-import { currentUser } from "../../shared/api/auth";
+import { getCurrentUser } from "../../shared/api/auth";
 import { useMotion } from "../../shared/hooks/useMotion";
 
 type Props = {
@@ -19,6 +19,7 @@ type Props = {
 };
 
 const handleLogout = () => {
+  localStorage.clear();
   router.navigate("/login");
 };
 
@@ -28,6 +29,13 @@ export function AppShell({ children }: Props) {
   reduceMotion,
   toggleMotion,
 } = useMotion();
+
+console.log("This is getCurrentUser",getCurrentUser());
+
+const currentUser = getCurrentUser();
+
+console.log("This is CurrentUser",getCurrentUser());
+
   return (
     <div className="min-h-screen">
       <header

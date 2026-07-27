@@ -1,11 +1,13 @@
 import { Navigate } from "react-router-dom";
-import { currentUser } from "../shared/api/auth";
+import { getCurrentUser } from "../shared/api/auth";
 import type { UserRole } from "../shared/types/user";
 
 type Props = {
   allowed: UserRole[];
   children: React.ReactNode;
 };
+
+const currentUser = getCurrentUser();
 
 export function RoleRedirect({
   allowed,

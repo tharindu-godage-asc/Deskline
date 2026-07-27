@@ -14,7 +14,7 @@ import { Card } from "../../../shared/ui/Card";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import {useNavigate} from "react-router-dom";
 import { Button } from "../../../shared/ui/button/Button";
-import { currentUser } from "../../../shared/api/auth";
+import { getCurrentUser } from "../../../shared/api/auth";
 
 type Props = {
   requests: Request[];
@@ -25,6 +25,8 @@ export function RequestList({
 }: Props) {
 
   const navigate = useNavigate();
+
+  const currentUser = getCurrentUser();
 
   const handleViewDetails = (requestId: string) => {
     navigate(`/requests/${requestId}`);
