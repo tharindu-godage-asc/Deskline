@@ -13,12 +13,16 @@ import { requests } from "../../../shared/fixtures/requests";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
+import { useAuth } from "../../../shared/context/AuthContext";
+import { canCancelRequest, canAssignToMe } from "../../../shared/lib/permissions";
+
 
 interface Props {
   request: (typeof requests)[number];
 }
 
 export function RequestDetail({ request }: Props) {
+  const { currentUser } = useAuth();
   return (
     <Card>
       <div className="space-y-6">
@@ -77,6 +81,40 @@ export function RequestDetail({ request }: Props) {
             </p>
           </div>
         </div>
+
+        {/* Actions */}
+          <div className="border-t pt-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">
+                Actions
+              </h3>
+
+              <div className="flex gap-2">
+                {currentUser &&
+                  canCancelRequest(
+                    currentUser.role,
+                    request.requesterId,
+                    currentUser.id,
+                    request.status
+                  ) && (
+                    <Button variant="danger">
+                      Cancel Request
+                    </Button>
+                  )}
+
+                  {currentUser &&
+                    canAssignToMe(
+                      currentUser.role
+                    ) &&
+                    request.assigneeId !==
+                      currentUser.id && (
+                      <Button>
+                        Assign To Me
+                      </Button>
+                    )}
+              </div>
+            </div>
+          </div>
 
         {/* Timeline */}
         <div className="border-t pt-4">

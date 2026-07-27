@@ -15,6 +15,7 @@ import { Badge } from "../../../shared/ui/badge/Badge";
 import {useNavigate} from "react-router-dom";
 import { Button } from "../../../shared/ui/button/Button";
 import { getCurrentUser } from "../../../shared/api/auth";
+import { isRequester } from "../../../shared/lib/permissions";
 
 type Props = {
   requests: Request[];
@@ -43,7 +44,7 @@ export function RequestList({
           Requests
         </h2>
 
-        {currentUser.role === "requester" && (
+        {isRequester(currentUser.role) && (
           <Button
             className="mr-4"
             variant="primary"
