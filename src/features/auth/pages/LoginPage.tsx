@@ -1,9 +1,11 @@
+import { router } from "../../../app/router";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 
 export function LoginPage() {
   const handleLogin = () => {
     console.log("Login clicked");
+    router.navigate("/my-requests");
   };
 
   return (

@@ -11,6 +11,7 @@
 
 import { requests } from "../../../shared/fixtures/requests";
 import { Badge } from "../../../shared/ui/badge/Badge";
+import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 
 interface Props {
@@ -79,13 +80,24 @@ export function RequestDetail({ request }: Props) {
 
         {/* Timeline */}
         <div className="border-t pt-4">
-          <p className="text-sm text-gray-500">
-            Created At
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm text-gray-500">
+                Created At
+              </p>
 
-          <p className="mt-1 text-sm">
-            {request.createdAt}
-          </p>
+              <p className="mt-1 text-sm">
+                {request.createdAt}
+              </p>
+            </div>
+
+            <Button
+              variant="secondary"
+              onClick={() => window.history.back()}
+            >
+              Back to Requests
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

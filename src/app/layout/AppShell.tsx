@@ -10,9 +10,14 @@
 import { type ReactNode } from "react";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { Button } from "../../shared/ui/button/Button";
+import { router } from "../router";
 
 type Props = {
   children: ReactNode;
+};
+
+const handleLogout = () => {
+  router.navigate("/login");
 };
 
 export function AppShell({ children }: Props) {
@@ -43,6 +48,7 @@ export function AppShell({ children }: Props) {
             <Button
               variant="danger"
               size="md"
+              onClick={handleLogout}
             >
               Logout
             </Button>
