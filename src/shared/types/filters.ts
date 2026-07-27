@@ -38,3 +38,12 @@ export const categoryOptions: Option<Category>[] = [
   { value: "facilities", label: "Facilities" },
   { value: "access", label: "Access" },
 ];
+
+export const DEFAULT_REQUEST_FILTERS: RequestFilters = {
+  search: "",
+  status: "all",
+  priority: "all",
+  category: "all",
+};
+
+
