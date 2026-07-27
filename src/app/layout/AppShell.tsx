@@ -68,21 +68,23 @@ console.log("This is CurrentUser",getCurrentUser());
 
           <div className="flex items-center justify-between pt-3">
             {/* User Info */}
-            <div className="flex items-center gap-3">
-              <span className="font-medium">
-                {currentUser.name}
-              </span>
+              {currentUser && (
+                <div className="flex items-center gap-3">
+                  <span className="font-medium">
+                    {currentUser.name}
+                  </span>
 
-              <span
-                className="rounded-full border px-3 py-1 text-xs font-medium capitalize"
-                style={{
-                  borderColor: "var(--color-border)",
-                  backgroundColor: "var(--color-surface)",
-                }}
-              >
-                {currentUser.role}
-              </span>
-            </div>
+                  <span
+                    className="rounded-full border px-3 py-1 text-xs font-medium capitalize"
+                    style={{
+                      borderColor: "var(--color-border)",
+                      backgroundColor: "var(--color-surface)",
+                    }}
+                  >
+                    {currentUser.role}
+                  </span>
+                </div>
+              )}
 
             {/* Actions */}
             <div className="flex items-center gap-2">
