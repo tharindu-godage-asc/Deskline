@@ -14,7 +14,7 @@ import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { useAuth } from "../../../shared/context/AuthContext";
-import { canCancelRequest, canAssignToMe } from "../../../shared/lib/permissions";
+import { canCancelRequest, canAssignToMe, canSetPending } from "../../../shared/lib/permissions";
 
 
 interface Props {
@@ -108,8 +108,18 @@ export function RequestDetail({ request }: Props) {
                     ) &&
                     request.assigneeId !==
                       currentUser.id && (
-                      <Button>
+                      <Button variant="secondary">
                         Assign To Me
+                      </Button>
+                    )}
+
+                    {currentUser &&
+                    canSetPending(
+                      currentUser.role
+                    ) &&
+                    request.status === "open" && (
+                      <Button variant="secondary">
+                        Set Pending
                       </Button>
                     )}
               </div>

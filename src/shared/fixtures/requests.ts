@@ -41,7 +41,7 @@ export const requests: Request[] = [
     priority: "high",
     category: "hardware",
     requesterId: "user-1",
-    assigneeId: "u2",
+    assigneeId: "user-3",
     createdAt: "2025-07-22",
     updatedAt: "2025-07-22",
   },
