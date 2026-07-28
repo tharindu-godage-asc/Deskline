@@ -3,7 +3,8 @@ import { type RequestFilters } from "../../../shared/types/filters";
 
 export function filterRequests(
   requests: Request[],
-  filters: RequestFilters
+  filters: RequestFilters,
+  currentUserId: string
 ) {
   return requests.filter((request) => {
     const matchesSearch =
@@ -23,11 +24,19 @@ export function filterRequests(
       filters.category === "all" ||
       request.category === filters.category;
 
+    const matchesAssignee = 
+      filters.assignee === "all" || 
+      (filters.assignee === "unassigned" &&
+        request.assigneeId === null) ||
+      (filters.assignee === "me" &&
+        request.assigneeId === currentUserId);
+
     return (
       matchesSearch &&
       matchesStatus &&
       matchesPriority &&
-      matchesCategory
+      matchesCategory &&
+      matchesAssignee
     );
   });
 }

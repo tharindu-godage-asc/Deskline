@@ -6,6 +6,7 @@ import {
   STATUS_OPTIONS,
   PRIORITY_OPTIONS,
   CATEGORY_OPTIONS,
+  ASSIGNEE_OPTIONS,
 } from "../../../shared/constants/requestFilterOptions";
 
 import type { RequestFilters as RequestFiltersType } from "../../../shared/types/filters";
@@ -13,11 +14,13 @@ import type { RequestFilters as RequestFiltersType } from "../../../shared/types
 type Props = {
   filters: RequestFiltersType;
   onChange: (filters: RequestFiltersType) => void;
+  showAssignee?: boolean;
 };
 
 export function RequestFilters({
   filters,
   onChange,
+  showAssignee,
 }: Props) {
   return (
     <div
@@ -79,6 +82,23 @@ export function RequestFilters({
           })
         }
       />
+
+      {showAssignee && (
+      <SelectFilter
+        label="Assignee"
+        value={filters.assignee ?? "all"}
+        options={ASSIGNEE_OPTIONS}
+        onChange={(assignee) =>
+          onChange({
+            ...filters,
+            assignee: assignee as
+              | "all"
+              | "unassigned"
+              | "me",
+          })
+        }
+      />
+    )}
     </div>
   );
 }

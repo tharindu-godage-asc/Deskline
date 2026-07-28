@@ -9,6 +9,7 @@ export type RequestFilters = {
   status: Status | "all";
   priority: Priority | "all";
   category: Category | "all";
+  assignee?: AssigneeFilter;
 };
 
 type Option<T extends string> = {
@@ -45,5 +46,11 @@ export const DEFAULT_REQUEST_FILTERS: RequestFilters = {
   priority: "all",
   category: "all",
 };
+
+export type AssigneeFilter =
+  | "all"
+  | "unassigned"
+  | "me";
+
 
 
