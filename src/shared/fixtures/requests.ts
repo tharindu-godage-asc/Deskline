@@ -8,11 +8,8 @@
  */
 
 import type {
-  Request,
-  User
+  Request
 } from "../types";
-
-// export const users: User[] = [
 //   {
 //     id: "u1",
 //     name: "John Smith",
@@ -66,5 +63,16 @@ export const requests: Request[] = [
     assigneeId: "user-2",
     createdAt: "2025-07-20",
     updatedAt: "2025-07-21",
+  },
+    {
+    id: "r4",
+    title: "Laptop not switching on",
+    status: "open",
+    priority: "high",
+    category: "hardware",
+    requesterId: "user-1",
+    assigneeId: "user-3",
+    createdAt: "2025-07-22",
+    updatedAt: "2025-07-22",
   },
 ];

@@ -15,6 +15,7 @@ import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
+import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } from "../api/requestActions";
 import { useState } from "react";
 import { users } from "../../../shared/api/auth";
 
@@ -112,7 +113,125 @@ export function RequestDetail({ request }: Props) {
                 Actions
               </h3>
 
+
+{/* /////-----------------------------Testing Purposes Only----------------------------\\\\\ */}
+
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              try {
+                cancelRequest(
+                  currentUser,
+                  request
+                );
+                console.log({
+                  role: currentUser.role,
+                  requesterId: request.requesterId,
+                  currentUserId: currentUser.id,
+                  status: request.status,
+                });
+
+                console.log(
+                  canCancelRequest(
+                    currentUser.role,
+                    request.requesterId,
+
+                    
+                    currentUser.id,
+                    request.status
+                  )
+                );
+              } catch (error) {
+                alert(
+                  (error as Error).message
+                );
+              }
+            }}
+          >
+            TEST CANCEL
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              try {
+                assignToMe(
+                  currentUser,
+                  request
+                );
+              } catch (error) {
+                alert(
+                  (error as Error).message
+                );
+              }
+            }}
+          >
+            TEST ASSIGN
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              try {
+                setPending(
+                  currentUser,
+                  request
+                );
+              } catch (error) {
+                alert(
+                  (error as Error).message
+                );
+              }
+            }}
+          >
+            TEST PENDING
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              try {
+                closeRequest(
+                  currentUser,
+                  request
+                );
+              } catch (error) {
+                alert(
+                  (error as Error).message
+                );
+              }
+            }}
+          >
+            TEST CLOSE
+          </Button>
+
+          <Button
+            variant="secondary"
+            onClick={() => {
+              try {
+                reassignRequest(
+                  currentUser,
+                  request,
+                  "user-2"
+                );
+              } catch (error) {
+                alert(
+                  (error as Error).message
+                );
+              }
+            }}
+          >
+            TEST REASSIGN
+          </Button>
+        </div>
+
+{/* /////--------------------------------------------------------------------------------\\\\\ */}
+
+
               <div className="flex gap-2">
+
+            {/* CancelRequest */}
                 {currentUser &&
                   canCancelRequest(
                     currentUser.role,
@@ -120,44 +239,100 @@ export function RequestDetail({ request }: Props) {
                     currentUser.id,
                     request.status
                   ) && (
-                    <Button variant="danger">
+                    <Button 
+                      variant="danger"
+                      onClick={() => {
+                            try {
+                              cancelRequest(
+                                currentUser,
+                                request
+                              );
+                            } catch (error) {
+                              alert(
+                                (error as Error).message
+                              );
+                            }
+                          }}>
                       Cancel Request
                     </Button>
                   )}
 
+            {/* AssignToMe */}
                   {currentUser &&
                     canAssignToMe(
                       currentUser.role
                     ) &&
                     request.assigneeId !==
                       currentUser.id && (
-                      <Button variant="secondary">
+                      <Button 
+                        variant="secondary"
+                        onClick={() => {
+                            try {
+                              assignToMe(
+                                currentUser,
+                                request
+                              );
+                            } catch (error) {
+                              alert(
+                                (error as Error).message
+                              );
+                            }
+                          }}>
                         Assign To Me
                       </Button>
                     )}
 
+            {/* SetPending */}
                     {currentUser &&
                     canSetPending(
                       currentUser.role
                     ) &&
                     request.status === "open" && (
-                      <Button variant="secondary">
+                      <Button 
+                        variant="secondary"
+                        onClick={() => {
+                              try {
+                                setPending(
+                                  currentUser,
+                                  request
+                                );
+                              } catch (error) {
+                                alert(
+                                  (error as Error).message
+                                );
+                              }
+                          }}>
                         Set Pending
                       </Button>
                     )}
 
+            {/* CloseRequest */}
                     {currentUser &&
                       canCloseRequest(
                         currentUser.role,
                         request.status
                       ) && (
-                        <Button variant="danger">
+                        <Button
+                          variant="danger"
+                          onClick={() => {
+                            try {
+                              closeRequest(
+                                currentUser,
+                                request
+                              );
+                            } catch (error) {
+                              alert(
+                                (error as Error).message
+                              );
+                            }
+                          }}
+                        >
                           Close Request
                         </Button>
                       )}
 
-                      {currentUser &&
-                        canReassign(
+                    {currentUser &&
+                      canReassign(
                           currentUser.role
                         ) && (
                           <div className="flex items-center gap-2">
@@ -186,7 +361,20 @@ export function RequestDetail({ request }: Props) {
                                 ))}
                             </select>
 
-                            <Button>
+                            <Button 
+                              onClick={() => {
+                                try {
+                                  reassignRequest(
+                                    currentUser,
+                                    request,
+                                    selectedAssignee
+                                  );
+                                } catch (error) {
+                                  alert(
+                                    (error as Error).message
+                                  );
+                                }
+                              }}>
                               Reassign
                             </Button>
                           </div>
