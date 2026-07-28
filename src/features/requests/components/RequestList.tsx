@@ -16,6 +16,12 @@ import {useNavigate} from "react-router-dom";
 import { Button } from "../../../shared/ui/button/Button";
 import { getCurrentUser } from "../../../shared/api/auth";
 import { isRequester } from "../../../shared/lib/permissions";
+import { useState } from "react";
+
+
+import { LoadingState } from "../components/states/LoadingState";
+import { EmptyState } from "../components/states/EmptyState";
+import { ErrorState } from "./states/ErrorState";
 
 type Props = {
   requests: Request[];
@@ -29,6 +35,9 @@ export function RequestList({
 
   const currentUser = getCurrentUser();
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
   const handleViewDetails = (requestId: string) => {
     navigate(`/requests/${requestId}`);
   }
@@ -36,6 +45,26 @@ export function RequestList({
   const handleNewRequest = () => {
     navigate("/requests/new");
   }
+
+  if (loading) return <LoadingState />;
+
+  if (requests.length === 0)
+  return (
+    <EmptyState title="No requests" message="There are no requests." />
+  );
+
+  if (error) {
+  return (
+    <ErrorState
+      onRetry={() =>
+        setError(false)
+      }
+    />
+  );
+}
+
+console.log("Current User:", currentUser);
+console.log("All Requests:", requests);
 
   return (
     <div className="space-y-3">

@@ -45,6 +45,7 @@ export const DEFAULT_REQUEST_FILTERS: RequestFilters = {
   status: "all",
   priority: "all",
   category: "all",
+  assignee: "all",
 };
 
 export type AssigneeFilter =
