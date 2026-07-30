@@ -62,7 +62,7 @@ export function RequestDetail({ request }: Props) {
             </h2>
           </div>
 
-          <Badge variant={request.status}>
+          <Badge variant={request.status} size="lg">
             {request.status}
           </Badge>
         </div>

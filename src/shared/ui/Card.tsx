@@ -9,7 +9,11 @@ export function Card({
 }: Props) {
   return (
     <div
-      className={`rounded-xl box-border shadow-md p-6 ${className}`}
+      className={`rounded-xl border p-6 ${className}`}
+      style={{
+        backgroundColor: "var(--color-surface)",
+        borderColor: "var(--color-border)",
+      }}
     >
       {children}
     </div>
