@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams} from "react-router-dom";
 
 import { requests} from "../../../shared/fixtures/requests";
@@ -6,8 +6,10 @@ import { RequestList } from "../components/RequestList";
 import { RequestFilters as RequestFiltersComponent } from "../components/RequestFilters";
 import { filterRequests } from "../utils/filterRequests";
 import { useAuth } from "../../../shared/context/AuthContext";
+import { useDebounce } from "../../../shared/hooks/useDebounce";
 
 import {type RequestFilters, DEFAULT_REQUEST_FILTERS} from "../../../shared/types/filters";
+
 
 
 
@@ -23,11 +25,32 @@ export function QueuePage() {
     status: initialStatus,
   });
 
-  const filteredRequests = filterRequests(
-    requests,
-    filters,
-    currentUser.id
-  );
+  const debouncedSearch =
+    useDebounce(
+      filters.search,
+      300
+    );
+
+  const filteredRequests = useMemo(
+  () =>
+    filterRequests(
+      requests,
+      {
+      ...filters,
+      search: debouncedSearch
+      },
+      currentUser.id
+
+    ),
+  [
+    debouncedSearch,
+    filters.assignee,
+    filters.status,
+    filters.priority,
+    filters.category,
+    currentUser.id,
+  ]
+);
 
   
 

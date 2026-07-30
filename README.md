@@ -100,3 +100,14 @@ As development progresses, the project will be extended with:
 - Theme persistence (Light/Dark Mode)
 - Accessibility improvements
 - Performance optimizations for large datasets
+
+## Queue Performance
+
+The Queue contains more than 500 requests.
+
+Performance optimizations:
+
+- Generated fixture data (~600 requests)
+- Filtering memoized with useMemo
+- Search input debounced by 300 ms
+- Queue interactions remain responsive even with large datasets
