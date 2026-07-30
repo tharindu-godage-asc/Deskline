@@ -30,6 +30,16 @@ export function RequestDetail({ request }: Props) {
 
   const { currentUser } = useAuth();
 
+  const requester = users.find(
+  (user) =>
+    user.id === request.requesterId
+);
+
+  const assignee = users.find(
+    (user) =>
+      user.id === request.assigneeId
+  );
+
   if (
       currentUser &&
       !canViewRequest(
@@ -92,7 +102,7 @@ export function RequestDetail({ request }: Props) {
               Requester
             </p>
             <p className="mt-1 font-medium">
-              {request.requesterId}
+              {requester?.name ?? "Unknown User"}
             </p>
           </div>
 
@@ -101,7 +111,7 @@ export function RequestDetail({ request }: Props) {
               Assignee
             </p>
             <p className="mt-1 font-medium">
-              {request.assigneeId}
+              {assignee?.name ?? "Unassigned"}
             </p>
           </div>
         </div>
