@@ -15,13 +15,14 @@ import { Card } from "../../../shared/ui/Card";
 
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
-import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } from "../api/requestActions";
+import { assignToMe, setPending, reassignRequest } from "../api/requestActions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../shared/hooks/useMotion";
 import { useMemo } from "react";
 
 import { getUsers } from "../../../shared/api/userApi";
 import { addComment } from "../../../shared/api/requestApi";
+import { updateRequest } from "../../../shared/api/requestApi";
 import { useToast } from "../../../shared/context/ToastContext";
 import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
 
@@ -213,86 +214,121 @@ export function RequestDetail({
         <div className="flex gap-2">
           <Button
             variant="secondary"
-            onClick={() => {
+            onClick={async () => {
               try {
-                cancelRequest(
-                  currentUser,
-                  request
-                );
-                console.log({
-                  role: currentUser.role,
-                  requesterId: request.requesterId,
-                  currentUserId: currentUser.id,
-                  status: request.status,
-                });
+                const updatedRequest =
+                  await updateRequest(
+                    request.id,
+                    {
+                      status: "cancelled",
+                    },
+                    currentUser.id
+                  );
 
                 console.log(
-                  canCancelRequest(
-                    currentUser.role,
-                    request.requesterId,
+                  "Cancelled Request:",
+                  updatedRequest
+                );
 
-                    
-                    currentUser.id,
-                    request.status
-                  )
+                showToast(
+                  "Request cancelled.",
+                  "success"
                 );
               } catch (error) {
-                alert(
-                  (error as Error).message
+                console.error(error);
+
+                showToast(
+                  "Failed to cancel request.",
+                  "error"
                 );
               }
             }}
           >
-            TEST CANCEL
-          </Button>
+          CANCEL
+        </Button>
 
           <Button
-            variant="secondary"
-            onClick={() => {
+            onClick={async () => {
               try {
-                assignToMe(
-                  currentUser,
-                  request
+                await updateRequest(
+                  request.id,
+                  {
+                    assigneeId:
+                      selectedAssignee,
+                  },
+                  currentUser.id
                 );
-              } catch (error) {
-                alert(
-                  (error as Error).message
+
+                showToast(
+                  "Request reassigned.",
+                  "success"
+                );
+              } catch {
+                showToast(
+                  "Failed to reassign request.",
+                  "error"
                 );
               }
             }}
           >
-            TEST ASSIGN
+            Reassign
           </Button>
+
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                try {
+                  await updateRequest(
+                    request.id,
+                    {
+                      status: "pending",
+                    },
+                    currentUser.id
+                  );
+
+                  showToast(
+                    "Request updated.",
+                    "success"
+                  );
+                } catch {
+                  showToast(
+                    "Failed to update request.",
+                    "error"
+                  );
+                }
+              }}
+            >
+              Set Pending
+            </Button>
 
           <Button
             variant="secondary"
-            onClick={() => {
+            onClick={async () => {
               try {
-                setPending(
-                  currentUser,
-                  request
-                );
-              } catch (error) {
-                alert(
-                  (error as Error).message
-                );
-              }
-            }}
-          >
-            TEST PENDING
-          </Button>
+                const updatedRequest =
+                  await updateRequest(
+                    request.id,
+                    {
+                      status: "closed",
+                    },
+                    currentUser.id
+                  );
 
-          <Button
-            variant="secondary"
-            onClick={() => {
-              try {
-                closeRequest(
-                  currentUser,
-                  request
+                console.log(
+                  "Updated Request:",
+                  updatedRequest
+                );
+
+                showToast(
+                  "Request closed.",
+                  "success"
                 );
               } catch (error) {
-                alert(
-                  (error as Error).message
+                console.error(error);
+
+                showToast(
+                  "Failed to close request.",
+                  "error"
                 );
               }
             }}
@@ -302,21 +338,29 @@ export function RequestDetail({
 
           <Button
             variant="secondary"
-            onClick={() => {
+            onClick={async () => {
               try {
-                reassignRequest(
-                  currentUser,
-                  request,
-                  "user-2"
+                await updateRequest(
+                  request.id,
+                  {
+                    assigneeId: currentUser.id,
+                  },
+                  currentUser.id
                 );
-              } catch (error) {
-                alert(
-                  (error as Error).message
+
+                showToast(
+                  "Request assigned.",
+                  "success"
+                );
+              } catch {
+                showToast(
+                  "Failed to assign request.",
+                  "error"
                 );
               }
             }}
           >
-            TEST REASSIGN
+            Assign To Me
           </Button>
         </div>
 
@@ -580,18 +624,34 @@ export function RequestDetail({
               if (
                 confirmAction === "cancel"
               ) {
-                cancelRequest(
-                  currentUser,
-                  request
+                updateRequest(
+                  request.id,
+                  {
+                    status: "cancelled",
+                  },
+                  currentUser.id
+                );
+
+                showToast(
+                  "Request cancelled.",
+                  "success"
                 );
               }
 
               if (
                 confirmAction === "close"
               ) {
-                closeRequest(
-                  currentUser,
-                  request
+                 updateRequest(
+                  request.id,
+                  {
+                    status: "closed",
+                  },
+                  currentUser.id
+                );
+
+                showToast(
+                  "Request closed.",
+                  "success"
                 );
               }
             } catch (error) {

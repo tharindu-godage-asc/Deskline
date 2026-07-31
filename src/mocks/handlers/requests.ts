@@ -3,13 +3,17 @@ import { http, HttpResponse } from "msw";
 import { requests } from "../../shared/fixtures/requests";
 import { users } from "../../shared/api/auth";
 import { UserComments } from "../../shared/fixtures/requests";
-
-
+import { type Status } from "../../shared/types";
 import type {
   Request,
   Category,
   Priority,
 } from "../../shared/types/index";
+
+type PatchRequestBody = {
+  status?: Status;
+  assigneeId?: string | null;
+};
 
 
 export const requestHandlers = [
@@ -232,5 +236,100 @@ http.post(
   }
 ),
 
+// PATCH requests
+http.patch(
+  "/requests/:id",
+  async ({ params, request }) => {
+    const requestId =
+      params.id as string;
 
+    const body =
+      (await request.json()) as PatchRequestBody;
+
+    const targetRequest =
+      requests.find(
+        (r) => r.id === requestId
+      );
+
+    if (!targetRequest) {
+      return HttpResponse.json(
+        {
+          message: "Request not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+    const userId =
+      request.headers.get(
+        "x-user-id"
+      );
+
+    const user = users.find(
+      (u) => u.id === userId
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    if (
+      body.status === "pending" &&
+      user.role === "requester"
+    ) {
+      return HttpResponse.json(
+        {
+          message: "Forbidden",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    if (
+      body.assigneeId &&
+      user.role !== "admin"
+    ) {
+      return HttpResponse.json(
+        {
+          message: "Forbidden",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+    if (
+      body.status === "closed" &&
+      user.role === "requester"
+    ) {
+      return HttpResponse.json(
+        {
+          message: "Forbidden",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    targetRequest.updatedAt =
+      new Date()
+        .toISOString()
+        .split("T")[0];
+
+    return HttpResponse.json(
+      targetRequest
+    );
+  }
+),
 ]

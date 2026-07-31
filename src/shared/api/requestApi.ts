@@ -1,3 +1,5 @@
+import type { Status } from "../types";
+
 export async function getRequests(
   userId: string
 ) {
@@ -91,6 +93,35 @@ export async function addComment(
   if (!response.ok) {
     throw new Error(
       "Failed to add comment"
+    );
+  }
+
+  return response.json();
+}
+
+export async function updateRequest(
+  requestId: string,
+  data: {
+    status?: Status;
+    assigneeId?: string | null;
+  },
+  currentUserId: string
+) {
+  const response = await fetch(
+    `/requests/${requestId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": currentUserId,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to update request"
     );
   }
 
