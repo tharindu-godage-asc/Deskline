@@ -1,9 +1,9 @@
-import { router } from "../../../app/router";
-import { getCurrentUser, users } from "../../../shared/api/auth";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { useLogin } from "../../../shared/hooks/useLogin";
 import { useState } from "react";
+import { loginSchema } from "../../requests/schemas/loginSchema";
+import { useToast } from "../../../shared/context/ToastContext";
 
 export function LoginPage() {
 
@@ -14,19 +14,63 @@ const [errors, setErrors] = useState({
   password: "",
   auth: "",
 });
+const [isLoading, setIsLoading] = useState(false);
 
 const { login } = useLogin();
 
-const handleLogin = () => {
-  const result = login({
+const { showToast } = useToast();
+
+const handleLogin = async () => {
+  const result = loginSchema.safeParse({
     email,
     password,
   });
 
   if (!result.success) {
-    setErrors(result.errors);
+    const fieldErrors =
+      result.error.flatten().fieldErrors;
+
+    setErrors({
+      email:
+        fieldErrors.email?.[0] ?? "",
+      password:
+        fieldErrors.password?.[0] ?? "",
+      auth: "",
+    });
+
+    return;
   }
-};
+
+  try {
+    setIsLoading(true);
+    setErrors({
+      email: "",
+      password: "",
+      auth: "",
+    });
+
+    await login({
+      email,
+      password,
+    });
+    showToast(
+      "Login successful.",
+      "success"
+    );
+      } catch {
+        setErrors({
+          email: "",
+          password: "",
+          auth: "Invalid email or password.",
+        });
+        showToast(
+        "Invalid email or password.",
+        "error"
+      );
+        } finally {    
+          setIsLoading(false);  
+        }
+    };
 
 
   return (
@@ -61,9 +105,15 @@ const handleLogin = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
+                onChange={(e) => {
+                  setEmail(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: "",
+                    auth: "",
+                  }));
+                }}
                 placeholder="you@example.com"
                 className="w-full rounded-md border px-3 py-2"
               />
@@ -86,9 +136,15 @@ const handleLogin = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
+                onChange={(e) => {
+                  setPassword(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: "",
+                    auth: "",
+                  }));
+                }}
                 placeholder="••••••••"
                 className="w-full rounded-md border px-3 py-2"
               />
@@ -109,8 +165,11 @@ const handleLogin = () => {
               type="button"
               className="w-full"
               onClick={handleLogin}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading
+                ? "Signing In..."
+                : "Sign In"}
             </Button>
           </form>
 

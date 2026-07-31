@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import { useMotion } from "../../hooks/useMotion";
+import {toastVariants,type ToastVariant,}from "./toast.variants";
 
 type Props = {
   message: string;
   onClose: () => void;
+  variant?: ToastVariant;
 };
 
 export function Toast({
   message,
   onClose,
+  variant = "success"
 }: Props) {
   const { reduceMotion } =
     useMotion();
 
   const [progress, setProgress] =
     useState(100);
+
+  const styles = toastVariants[variant];
 
   useEffect(() => {
     const duration = 3000;
@@ -49,7 +54,7 @@ export function Toast({
       {/* Progress Bar */}
       <div className="h-1 w-full bg-gray-200">
         <div
-            className="h-full bg-green-500 ml-auto"
+            className={`h-full ml-auto ${styles.progressBar}`}
             style={{
             width: `${progress}%`,
             transition: reduceMotion
@@ -61,9 +66,15 @@ export function Toast({
 
       {/* Content */}
       <div className="flex items-center justify-between p-4">
-        <p className="text-sm">
-          {message}
-        </p>
+        <div className="flex items-center gap-3">
+          <div
+            className={`h-2 w-2 rounded-full ${styles.indicator}`}
+          />
+
+          <p className="text-sm">
+            {message}
+          </p>
+        </div>
 
         <button
           onClick={onClose}
