@@ -18,6 +18,8 @@ import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canRea
 import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } from "../api/requestActions";
 import { useState } from "react";
 import { users } from "../../../shared/api/auth";
+import { UserComments } from "../../../shared/fixtures/requests";
+import { ConfirmDialog } from "../../../shared/ui/dialog/ConfirmDialog";
 
 
 interface Props {
@@ -25,20 +27,53 @@ interface Props {
 }
 
 export function RequestDetail({ request }: Props) {
-  const [selectedAssignee, setSelectedAssignee] =
-  useState("");
-
+  const [selectedAssignee, setSelectedAssignee] = useState("");
   const { currentUser } = useAuth();
+  const requester = users.find((user) =>user.id === request.requesterId);
+  const assignee = users.find((user) =>user.id === request.assigneeId);
+  const [confirmAction, setConfirmAction] =useState<"cancel" | "close" | null>(null);
 
-  const requester = users.find(
-  (user) =>
-    user.id === request.requesterId
-);
+  const [comments, setComments] = useState(UserComments.filter((comment) => comment.requestId === request.id));
+  const [commentText, setCommentText] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
-  const assignee = users.find(
-    (user) =>
-      user.id === request.assigneeId
-  );
+  const handleAddComment = async () => {
+    if (
+      !commentText.trim() ||
+      !currentUser ||
+      isSubmittingComment
+    ) {
+      return;
+    }
+
+    setIsSubmittingComment(true);
+
+    try {
+      // Simulate API request
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1000)
+      );
+
+      const newComment = {
+        id: crypto.randomUUID(),
+        requestId: request.id,
+        author: currentUser.name,
+        message: commentText,
+        createdAt: new Date().toLocaleString(),
+      };
+
+      setComments((prev) => [
+        ...prev,
+        newComment,
+      ]);
+
+      setCommentText("");
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+
 
   if (
       currentUser &&
@@ -249,20 +284,12 @@ export function RequestDetail({ request }: Props) {
                     currentUser.id,
                     request.status
                   ) && (
-                    <Button 
+                    <Button
                       variant="danger"
-                      onClick={() => {
-                            try {
-                              cancelRequest(
-                                currentUser,
-                                request
-                              );
-                            } catch (error) {
-                              alert(
-                                (error as Error).message
-                              );
-                            }
-                          }}>
+                      onClick={() =>
+                        setConfirmAction("cancel")
+                      }
+                    >
                       Cancel Request
                     </Button>
                   )}
@@ -324,18 +351,9 @@ export function RequestDetail({ request }: Props) {
                       ) && (
                         <Button
                           variant="danger"
-                          onClick={() => {
-                            try {
-                              closeRequest(
-                                currentUser,
-                                request
-                              );
-                            } catch (error) {
-                              alert(
-                                (error as Error).message
-                              );
-                            }
-                          }}
+                          onClick={() =>
+                            setConfirmAction("close")
+                          }
                         >
                           Close Request
                         </Button>
@@ -399,6 +417,45 @@ export function RequestDetail({ request }: Props) {
         <h3 className="mb-3 font-semibold">
           Comments
         </h3>
+          
+          {comments.length === 0 ? (
+            <p className="text-sm opacity-70">
+              No comments yet.
+            </p>
+          ) : (
+                    <div className="space-y-3">
+          {comments.map((comment) => (
+            <div
+              key={comment.id}
+              className="rounded-lg border p-3"
+            >
+              <div className="flex items-center justify-between">
+                <p className="font-medium">
+                  {comment.author}
+                </p>
+
+                <p className="text-xs opacity-70">
+                  {comment.createdAt}
+                </p>
+              </div>
+
+              <p className="mt-2 text-sm">
+                {comment.message}
+              </p>
+            </div>
+          ))}
+        </div>
+          )}
+  
+
+        {/* Message Thread */}
+      <div className="border-t pt-4">
+        <h3 className="mb-3 font-semibold">
+          Activity
+        </h3>
+
+
+      </div>
 
           {currentUser &&
             canComment(
@@ -412,10 +469,20 @@ export function RequestDetail({ request }: Props) {
                   className="w-full rounded-md border p-3"
                   rows={4}
                   placeholder="Add a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
                 />
 
-                <Button>
-                  Add Comment
+                <Button
+                  onClick={handleAddComment}
+                  disabled={
+                    isSubmittingComment ||
+                    !commentText.trim()
+                  }
+                >
+                  {isSubmittingComment
+                    ? "Submitting..."
+                    : "Add Comment"}
                 </Button>
               </div>
             ) : (
@@ -426,6 +493,50 @@ export function RequestDetail({ request }: Props) {
               </p>
             )}
         </div>
+
+        <ConfirmDialog
+          isOpen={confirmAction !== null}
+          title={
+            confirmAction === "cancel"
+              ? "Cancel Request"
+              : "Close Request"
+          }
+          message={
+            confirmAction === "cancel"
+              ? "Are you sure you want to cancel this request?"
+              : "Are you sure you want to close this request?"
+          }
+          onConfirm={() => {
+            try {
+              if (
+                confirmAction === "cancel"
+              ) {
+                cancelRequest(
+                  currentUser,
+                  request
+                );
+              }
+
+              if (
+                confirmAction === "close"
+              ) {
+                closeRequest(
+                  currentUser,
+                  request
+                );
+              }
+            } catch (error) {
+              alert(
+                (error as Error).message
+              );
+            }
+
+            setConfirmAction(null);
+          }}
+          onCancel={() =>
+            setConfirmAction(null)
+          }
+        />
 
         {/* Timeline */}
         <div className="border-t pt-4">

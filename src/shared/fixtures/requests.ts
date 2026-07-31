@@ -7,28 +7,8 @@
  * to be developed and tested without relying on an external API.
  */
 
-import type {
-  Request
-} from "../types";
-//   {
-//     id: "u1",
-//     name: "John Smith",
-//     email: "john@test.com",
-//     role: "requester",
-//   },
-//   {
-//     id: "u2",
-//     name: "Sarah Wilson",
-//     email: "sarah@test.com",
-//     role: "technician",
-//   },
-//   {
-//     id: "u3",
-//     name: "Mike Admin",
-//     email: "admin@test.com",
-//     role: "admin",
-//   },
-// ];
+import type { Request } from "../types";
+
 
 const baseRequests: Request[] = [
   {
@@ -136,8 +116,34 @@ const generatedRequests: Request[] =
     })
   );
 
+export const UserComments = [
+  {
+    id: "c1",
+    requestId: "r1",
+    author: "John Doe",
+    message:
+      "My laptop screen started flickering this morning.",
+    createdAt: "2025-07-22 09:15",
+  },
+  {
+    id: "c2",
+    requestId: "r1",
+    author: "John Wayne",
+    message:
+      "I've assigned this issue to myself and will investigate.",
+    createdAt: "2025-07-22 10:30",
+  },
+  {
+    id: "c3",
+    requestId: "r2",
+    author: "Jane Smith",
+    message:
+      "I'm also experiencing this VPN issue.",
+    createdAt: "2025-07-22 11:45",
+  },
+];
 
 export const requests = [
   ...baseRequests,
-  ...generatedRequests,
+  // ...generatedRequests,
 ];
