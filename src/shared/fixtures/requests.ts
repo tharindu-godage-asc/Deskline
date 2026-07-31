@@ -77,44 +77,44 @@ const categories = [
   "access",
 ] as const;
 
-const generatedRequests: Request[] =
-  Array.from(
-    { length: 600 },
-    (_, index) => ({
-      id: `generated-${index + 1}`,
-      title: `Generated Request ${index + 1}`,
-      status:
-        statuses[
-          index %
-            statuses.length
-        ],
+// const generatedRequests: Request[] =
+//   Array.from(
+//     { length: 600 },
+//     (_, index) => ({
+//       id: `generated-${index + 1}`,
+//       title: `Generated Request ${index + 1}`,
+//       status:
+//         statuses[
+//           index %
+//             statuses.length
+//         ],
 
-      priority:
-        priorities[
-          index %
-            priorities.length
-        ],
+//       priority:
+//         priorities[
+//           index %
+//             priorities.length
+//         ],
 
-      category:
-        categories[
-          index %
-            categories.length
-        ],
+//       category:
+//         categories[
+//           index %
+//             categories.length
+//         ],
 
-      requesterId:
-        index % 2 === 0
-          ? "user-1"
-          : "user-4",
+//       requesterId:
+//         index % 2 === 0
+//           ? "user-1"
+//           : "user-4",
 
-      assigneeId:
-        index % 5 === 0
-          ? null
-          : "user-2",
+//       assigneeId:
+//         index % 5 === 0
+//           ? null
+//           : "user-2",
 
-      createdAt: "2025-07-22",
-      updatedAt: "2025-07-22",
-    })
-  );
+//       createdAt: "2025-07-22",
+//       updatedAt: "2025-07-22",
+//     })
+//   );
 
 export const UserComments = [
   {

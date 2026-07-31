@@ -3,6 +3,8 @@ import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { requestSchema } from "../schemas/requestSchema";
 import { getCurrentUser } from "../../../shared/api/auth";
+import { createRequest } from "../api/requestActions";
+import { Toast } from "../../../shared/ui/toast/Toast";
 
 
 export function NewRequestPage() {
@@ -17,6 +19,7 @@ const [errors, setErrors] = useState({
   priority: "",
   description: "",
 });
+const [showToast, setShowToast] = useState(false);
 
 
 const handleSubmit = (
@@ -62,17 +65,14 @@ const handleSubmit = (
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-
-      // const firstComment = {
-      //   id: crypto.randomUUID(),
-      //   requestId: newRequest.id,
-      //   author: currentUser.name,
-      //   message: description,
-      //   createdAt: new Date().toLocaleString(),
-      // };
-
-        console.log("New Request", newRequest);
-        // console.log("First Comment", firstComment);
+        createRequest(
+          currentUser,
+          newRequest
+        );
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
 
         setTitle("");
         setCategory("");
@@ -81,15 +81,13 @@ const handleSubmit = (
     };
 
 
-const isValid =
-    !!(
-      title.trim() &&
-      category &&
-      priority &&
-      description.trim()
-    );
-
   return (
+    <>
+  {showToast && (
+    <Toast
+      message="Request created successfully."
+    />
+  )}
     <Card>
       <div className="space-y-6">
         <div>
@@ -248,7 +246,6 @@ const isValid =
           <div className="flex justify-end">
             <Button
               type="submit"
-              disabled={!isValid}
             >
               Submit Request
             </Button>
@@ -256,5 +253,6 @@ const isValid =
         </form>
       </div>
     </Card>
+    </>
   );
 }

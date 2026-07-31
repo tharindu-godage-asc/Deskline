@@ -8,7 +8,33 @@ import {
   canAssignToMe,
   canSetPending,
   canReassign,
+  canCreateRequest
 } from "../../../shared/lib/permissions";
+
+import { requests } from "../../../shared/fixtures/requests";
+
+export function createRequest(
+  currentUser: any,
+  request: any
+) {
+  if (
+    !canCreateRequest(
+      currentUser.role
+    )
+  ) {
+    throw new ForbiddenError(
+      "You do not have permission to create requests."
+    );
+  }
+
+  requests.unshift(request);
+
+  console.log(
+    `Request ${request.id} created`
+  );
+
+  return request;
+}
 
 export function cancelRequest(
   currentUser: any,
