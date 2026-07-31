@@ -13,13 +13,17 @@ import { requests } from "../../../shared/fixtures/requests";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
+
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
 import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } from "../api/requestActions";
 import { useState } from "react";
+import { useMotion } from "../../../shared/hooks/useMotion";
+
 import { users } from "../../../shared/api/auth";
 import { UserComments } from "../../../shared/fixtures/requests";
 import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
+
 import { LoadingState } from "./states/LoadingState";
 import { ErrorState } from "./states/ErrorState";
 
@@ -40,6 +44,7 @@ export function RequestDetail({ request }: Props) {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [loading] = useState(false);
   const [error, setError] = useState(false);
+  const { reduceMotion } = useMotion();
 
   const handleAddComment = async () => {
     if (
@@ -508,9 +513,21 @@ export function RequestDetail({ request }: Props) {
                     !commentText.trim()
                   }
                 >
-                  {isSubmittingComment
-                    ? "Submitting..."
-                    : "Add Comment"}
+                 {isSubmittingComment ? (
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={
+                          reduceMotion
+                            ? ""
+                            : "h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"
+                        }
+                      />
+
+                      Submitting...
+                    </span>
+                  ) : (
+                    "Add Comment"
+                  )}
                 </Button>
               </div>
             ) : (
