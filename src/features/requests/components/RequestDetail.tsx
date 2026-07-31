@@ -21,6 +21,8 @@ import { useMotion } from "../../../shared/hooks/useMotion";
 import { useMemo } from "react";
 
 import { getUsers } from "../../../shared/api/userApi";
+import { addComment } from "../../../shared/api/requestApi";
+import { useToast } from "../../../shared/context/ToastContext";
 import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
 
 interface Props {
@@ -43,6 +45,7 @@ export function RequestDetail({
       ),
     [users, request.requesterId]
   );
+  const { showToast } = useToast();
 
   const assignee = useMemo(
     () =>
@@ -92,18 +95,13 @@ export function RequestDetail({
     setIsSubmittingComment(true);
 
     try {
-      // Simulate API request
-      await new Promise((resolve) =>
-        setTimeout(resolve, 1000)
+      const newComment = await addComment(
+        request.id,
+        {
+          author: currentUser.name,
+          message: commentText,
+        }
       );
-
-      const newComment = {
-        id: crypto.randomUUID(),
-        requestId: request.id,
-        author: currentUser.name,
-        message: commentText,
-        createdAt: new Date().toLocaleString(),
-      };
 
       setComments((prev) => [
         ...prev,
@@ -111,6 +109,16 @@ export function RequestDetail({
       ]);
 
       setCommentText("");
+
+      showToast(
+        "Comment added.",
+        "success"
+      );
+    } catch {
+      showToast(
+        "Failed to add comment.",
+        "error"
+      );
     } finally {
       setIsSubmittingComment(false);
     }

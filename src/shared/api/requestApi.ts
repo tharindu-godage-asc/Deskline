@@ -67,3 +67,32 @@ export async function createRequest(
 
   return response.json();
 }
+
+export async function addComment(
+  requestId: string,
+  data: {
+    author: string;
+    message: string;
+  }
+) {
+  const response =
+    await fetch(
+      `/requests/${requestId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to add comment"
+    );
+  }
+
+  return response.json();
+}

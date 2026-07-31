@@ -14,7 +14,7 @@ import type {
 
 export const requestHandlers = [
 
-//   Get all requests
+//  GET all requests
   http.get(
     "/requests",
     ({ request }) => {
@@ -57,10 +57,9 @@ export const requestHandlers = [
         requests
       );
     }
-  ),
+),
 
-
-//   Get Request by ID
+//  GET Request by ID
   http.get(
   "/requests/:id",
   ({ params }) => {
@@ -99,7 +98,7 @@ export const requestHandlers = [
   }
 ),
 
-// Create New request
+// POST New request
 http.post(
   "/requests",
   async ({ request }) => {
@@ -150,6 +149,88 @@ http.post(
       }
     );
   }
-)
+),
 
-];
+// POST new comments
+http.post(
+  "/requests/:id/messages",
+  async ({ params, request }) => {
+    const requestId =
+      params.id as string;
+
+    const req =
+      requests.find(
+        (r) =>
+          r.id === requestId
+      );
+
+    if (!req) {
+      return HttpResponse.json(
+        {
+          message:
+            "Request not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    if (
+      req.status === "closed" ||
+      req.status === "cancelled"
+    ) {
+      return HttpResponse.json(
+        {
+          message:
+            "Comments are disabled",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    const body =
+      (await request.json()) as
+        | {
+            author: string;
+            message: string;
+          }
+        | null;
+
+    if (!body || !body.author || !body.message) {
+      return HttpResponse.json(
+        {
+          message: "Invalid request body",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const newComment = {
+      id: crypto.randomUUID(),
+      requestId,
+      author: body.author,
+      message: body.message,
+      createdAt:
+        new Date().toLocaleString(),
+    };
+
+    UserComments.push(
+      newComment
+    );
+
+    return HttpResponse.json(
+      newComment,
+      {
+        status: 201,
+      }
+    );
+  }
+),
+
+
+]
