@@ -16,3 +16,20 @@ export async function getRequests(
 
   return response.json();
 }
+
+export async function getRequestById(
+  id: string
+) {
+  const response =
+    await fetch(
+      `/requests/${id}`
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to load request"
+    );
+  }
+
+  return response.json();
+}

@@ -9,7 +9,6 @@
  * selected request and support additional interactions.
  */
 
-import { requests } from "../../../shared/fixtures/requests";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
@@ -17,34 +16,69 @@ import { Card } from "../../../shared/ui/Card";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
 import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } from "../api/requestActions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMotion } from "../../../shared/hooks/useMotion";
+import { useMemo } from "react";
 
-import { users } from "../../../shared/api/auth";
-import { UserComments } from "../../../shared/fixtures/requests";
+import { getUsers } from "../../../shared/api/userApi";
 import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
 
-import { LoadingState } from "./states/LoadingState";
-import { ErrorState } from "./states/ErrorState";
-
-
 interface Props {
-  request: (typeof requests)[number];
+  request: any;
+  messages: any[];
 }
 
-export function RequestDetail({ request }: Props) {
+export function RequestDetail({
+  request,
+  messages,
+}: Props) {
   const [selectedAssignee, setSelectedAssignee] = useState("");
   const { currentUser } = useAuth();
-  const requester = users.find((user) =>user.id === request.requesterId);
-  const assignee = users.find((user) =>user.id === request.assigneeId);
+  const [users, setUsers] = useState<any[]>([]);
+  const requester = useMemo(
+    () =>
+      users.find(
+        (user) =>
+          user.id === request.requesterId
+      ),
+    [users, request.requesterId]
+  );
+
+  const assignee = useMemo(
+    () =>
+      users.find(
+        (user) =>
+          user.id === request.assigneeId
+      ),
+    [users, request.assigneeId]
+  );
   const [confirmAction, setConfirmAction] =useState<"cancel" | "close" | null>(null);
 
-  const [comments, setComments] = useState(UserComments.filter((comment) => comment.requestId === request.id));
+  const [comments, setComments] = useState(messages);
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-  const [loading] = useState(false);
-  const [error, setError] = useState(false);
   const { reduceMotion } = useMotion();
+
+  useEffect(() => {
+  async function loadUsers() {
+    try {
+      const data = await getUsers();
+
+      setUsers(data);
+    } catch (error) {
+      console.error(
+        "Failed to load users",
+        error
+      );
+    }
+  }
+
+  loadUsers();
+}, []);
+
+  useEffect(() => {
+    setComments(messages);
+  }, [messages]);
 
   const handleAddComment = async () => {
     if (
@@ -82,25 +116,7 @@ export function RequestDetail({ request }: Props) {
     }
   };
 
-
-  if (loading) {
-    return (
-      <LoadingState
-        message="Loading request..."
-      />
-    );
-  }
-  if (error) {
-  return (
-    <ErrorState
-      onRetry={() =>
-        setError(false)
-      }
-    />
-  );
-}
-
-  if (
+ if (
       currentUser &&
       !canViewRequest(
         currentUser.role,
