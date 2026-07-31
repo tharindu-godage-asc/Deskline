@@ -3,8 +3,8 @@ import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { requestSchema } from "../schemas/requestSchema";
 import { getCurrentUser } from "../../../shared/api/auth";
-import { createRequest } from "../api/requestActions";
-import { Toast } from "../../../shared/ui/toast/Toast";
+import {createRequest} from "../../../shared/api/requestApi";
+import { useToast } from "../../../shared/context/ToastContext";
 
 
 export function NewRequestPage() {
@@ -19,10 +19,12 @@ const [errors, setErrors] = useState({
   priority: "",
   description: "",
 });
-const [showToast, setShowToast] = useState(false);
+const [isSubmitting, setIsSubmitting] = useState(false);
+const { showToast } = useToast();
 
 
-const handleSubmit = (
+
+const handleSubmit = async (
       event: React.FormEvent<HTMLFormElement>
       ) => {
         event.preventDefault();
@@ -48,49 +50,44 @@ const handleSubmit = (
             });
             return;
           }
-      setErrors({
-        title: "",
-        category: "",
-        priority: "",
-        description: "",
-      });
-      const newRequest = {
-        id: crypto.randomUUID(),
-        title,
-        category,
-        priority,
-        status: "open",
-        requesterId: currentUser.id,
-        assigneeId: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-        createRequest(
-          currentUser,
-          newRequest
-        );
-        setShowToast(true);
-        setTimeout(() => {
-          setShowToast(false);
-        }, 3000);
-
-        setTitle("");
-        setCategory("");
-        setPriority("medium");
-        setDescription("");
-    };
-
+          setErrors({
+            title: "",
+            category: "",
+            priority: "",
+            description: "",
+          });
+          try{
+            setIsSubmitting(true)
+            await createRequest({
+              title,
+              category,
+              priority,
+              description,
+              requesterId:
+                currentUser.id,
+              author:
+                currentUser.name,
+            });
+            showToast(
+              "Request created successfully.",
+              "success"
+            );
+            setTitle("");
+            setCategory("");
+            setPriority("medium");
+            setDescription("");
+        }catch {  
+          showToast(
+              "Request Creation Failed",
+              "error"
+            );
+        }
+        finally{
+          setIsSubmitting(false);
+        }
+          }
 
   return (
-    <>
-  {showToast && (
-  <Toast
-    message="Request created successfully."
-    onClose={() =>
-      setShowToast(false)
-    }
-  />
-)}
     <Card>
       <div className="space-y-6">
         <div>
@@ -249,13 +246,15 @@ const handleSubmit = (
           <div className="flex justify-end">
             <Button
               type="submit"
+              disabled={isSubmitting}
             >
-              Submit Request
+              {isSubmitting
+                ? "Creating..."
+                : "Submit Request"}
             </Button>
           </div>
         </form>
       </div>
     </Card>
-    </>
   );
 }
