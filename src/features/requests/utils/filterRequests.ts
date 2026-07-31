@@ -24,8 +24,9 @@ export function filterRequests(
       filters.category === "all" ||
       request.category === filters.category;
 
-    const matchesAssignee = 
-      filters.assignee === "all" || 
+    const matchesAssignee =
+      filters.assignee === undefined ||
+      filters.assignee === "all" ||
       (filters.assignee === "unassigned" &&
         request.assigneeId === null) ||
       (filters.assignee === "me" &&
