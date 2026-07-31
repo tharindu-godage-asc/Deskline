@@ -35,7 +35,7 @@ return createPortal(
 
     {/* Modal */}
     <div className="relative z-10 w-full max-w-md px-4">
-      <Card>
+      <Card className="animate-[dialogIn_200ms_ease-out]">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">{title}</h3>
 
