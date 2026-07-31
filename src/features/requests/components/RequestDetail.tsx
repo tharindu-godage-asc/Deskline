@@ -20,6 +20,8 @@ import { useState } from "react";
 import { users } from "../../../shared/api/auth";
 import { UserComments } from "../../../shared/fixtures/requests";
 import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
+import { LoadingState } from "./states/LoadingState";
+import { ErrorState } from "./states/ErrorState";
 
 
 interface Props {
@@ -36,6 +38,8 @@ export function RequestDetail({ request }: Props) {
   const [comments, setComments] = useState(UserComments.filter((comment) => comment.requestId === request.id));
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [loading] = useState(false);
+  const [error, setError] = useState(false);
 
   const handleAddComment = async () => {
     if (
@@ -74,6 +78,22 @@ export function RequestDetail({ request }: Props) {
   };
 
 
+  if (loading) {
+    return (
+      <LoadingState
+        message="Loading request..."
+      />
+    );
+  }
+  if (error) {
+  return (
+    <ErrorState
+      onRetry={() =>
+        setError(false)
+      }
+    />
+  );
+}
 
   if (
       currentUser &&
@@ -378,7 +398,15 @@ export function RequestDetail({ request }: Props) {
                               </option>
 
                               {users
-                                .filter((user) => user.id !== request.assigneeId)
+                                .filter(
+                                  (user) =>
+                                    user.role === "technician" ||
+                                    user.role === "admin"
+                                )
+                                .filter(
+                                  (user) =>
+                                    user.id !== request.assigneeId
+                                )
                                 .map((user) => (
                                   <option
                                     key={user.id}
