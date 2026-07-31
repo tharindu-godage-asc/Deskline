@@ -19,7 +19,7 @@ import { cancelRequest, assignToMe, setPending, reassignRequest, closeRequest } 
 import { useState } from "react";
 import { users } from "../../../shared/api/auth";
 import { UserComments } from "../../../shared/fixtures/requests";
-import { ConfirmDialog } from "../../../shared/ui/dialog/ConfirmDialog";
+import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
 
 
 interface Props {
