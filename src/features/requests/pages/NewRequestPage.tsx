@@ -1,13 +1,26 @@
+import { useState } from "react";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 
 export function NewRequestPage() {
+
+const [title, setTitle] = useState("");
+const [description, setDescription] = useState("");
+const [category, setCategory] = useState("");
+const [priority, setPriority] = useState("medium");
+
   const handleSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     console.log("Submit request");
   };
+  console.log({
+  title,
+  category,
+  priority,
+  description,
+});
 
   return (
     <Card>
@@ -37,6 +50,10 @@ export function NewRequestPage() {
             <input
               id="title"
               type="text"
+              value={title}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
               placeholder="Brief summary of the issue"
               className="w-full rounded-md border px-3 py-2"
             />
@@ -51,9 +68,13 @@ export function NewRequestPage() {
             </label>
 
             <select
-              id="category"
-              className="w-full rounded-md border px-3 py-2"
-            >
+                id="category"
+                value={category}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
+                className="w-full rounded-md border px-3 py-2"
+              >
               <option value="">
                 Select a category
               </option>
@@ -86,6 +107,10 @@ export function NewRequestPage() {
 
             <select
               id="priority"
+              value={priority}
+              onChange={(e) =>
+                setPriority(e.target.value)
+              }
               className="w-full rounded-md border px-3 py-2"
             >
               <option value="low">Low</option>
@@ -105,6 +130,10 @@ export function NewRequestPage() {
             <textarea
               id="description"
               rows={5}
+              value={description}
+              onChange={(e) =>
+                setDescription(e.target.value)
+              }
               placeholder="Provide details about the issue..."
               className="w-full rounded-md border px-3 py-2"
             />
