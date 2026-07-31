@@ -1,26 +1,93 @@
 import { useState } from "react";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
+import { requestSchema } from "../schemas/requestSchema";
+import { getCurrentUser } from "../../../shared/api/auth";
+
 
 export function NewRequestPage() {
-
+const currentUser = getCurrentUser();
 const [title, setTitle] = useState("");
 const [description, setDescription] = useState("");
 const [category, setCategory] = useState("");
 const [priority, setPriority] = useState("medium");
-
-  const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    console.log("Submit request");
-  };
-  console.log({
-  title,
-  category,
-  priority,
-  description,
+const [errors, setErrors] = useState({
+  title: "",
+  category: "",
+  priority: "",
+  description: "",
 });
+
+
+const handleSubmit = (
+      event: React.FormEvent<HTMLFormElement>
+      ) => {
+        event.preventDefault();
+          const result = requestSchema.safeParse({
+              title,
+              category,
+              priority,
+              description,
+            });
+          if (!result.success) {
+            const fieldErrors =
+              result.error.flatten().fieldErrors;
+
+            setErrors({
+              title:
+                fieldErrors.title?.[0] ?? "",
+              category:
+                fieldErrors.category?.[0] ?? "",
+              priority:
+                fieldErrors.priority?.[0] ?? "",
+              description:
+                fieldErrors.description?.[0] ?? "",
+            });
+            return;
+          }
+      setErrors({
+        title: "",
+        category: "",
+        priority: "",
+        description: "",
+      });
+      const newRequest = {
+        id: crypto.randomUUID(),
+        title,
+        category,
+        priority,
+        status: "open",
+        requesterId: currentUser.id,
+        assigneeId: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // const firstComment = {
+      //   id: crypto.randomUUID(),
+      //   requestId: newRequest.id,
+      //   author: currentUser.name,
+      //   message: description,
+      //   createdAt: new Date().toLocaleString(),
+      // };
+
+        console.log("New Request", newRequest);
+        // console.log("First Comment", firstComment);
+
+        setTitle("");
+        setCategory("");
+        setPriority("medium");
+        setDescription("");
+    };
+
+
+const isValid =
+    !!(
+      title.trim() &&
+      category &&
+      priority &&
+      description.trim()
+    );
 
   return (
     <Card>
@@ -51,12 +118,23 @@ const [priority, setPriority] = useState("medium");
               id="title"
               type="text"
               value={title}
-              onChange={(e) =>
-                setTitle(e.target.value)
-              }
+              onChange={(e) => {
+                setTitle(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  title: "",
+                }));
+              }}
               placeholder="Brief summary of the issue"
               className="w-full rounded-md border px-3 py-2"
             />
+
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.title}
+              </p>
+            )}
+
           </div>
 
           <div>
@@ -70,9 +148,13 @@ const [priority, setPriority] = useState("medium");
             <select
                 id="category"
                 value={category}
-                onChange={(e) =>
-                  setCategory(e.target.value)
-                }
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    category: "",
+                  }));
+                }}
                 className="w-full rounded-md border px-3 py-2"
               >
               <option value="">
@@ -95,6 +177,12 @@ const [priority, setPriority] = useState("medium");
                 Access
               </option>
             </select>
+
+            {errors.category && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.category}
+              </p>
+            )}
           </div>
 
           <div>
@@ -108,15 +196,24 @@ const [priority, setPriority] = useState("medium");
             <select
               id="priority"
               value={priority}
-              onChange={(e) =>
-                setPriority(e.target.value)
-              }
+              onChange={(e) => {
+                setPriority(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  priority: "",
+                }));
+              }}
               className="w-full rounded-md border px-3 py-2"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
+            {errors.priority && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.priority}
+                </p>
+              )}
           </div>
 
           <div>
@@ -131,16 +228,28 @@ const [priority, setPriority] = useState("medium");
               id="description"
               rows={5}
               value={description}
-              onChange={(e) =>
-                setDescription(e.target.value)
-              }
+              onChange={(e) => {
+                setDescription(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  description: "",
+                }));
+              }}
               placeholder="Provide details about the issue..."
               className="w-full rounded-md border px-3 py-2"
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.description}
+              </p>
+            )}
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit">
+            <Button
+              type="submit"
+              disabled={!isValid}
+            >
               Submit Request
             </Button>
           </div>
