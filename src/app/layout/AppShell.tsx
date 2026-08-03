@@ -14,6 +14,7 @@ import { router } from "../router";
 import { getCurrentUser } from "../../shared/api/auth";
 import { useMotion } from "../../shared/hooks/useMotion";
 import { useAuth } from "../../shared/context/AuthContext";
+import { useToast } from "../../shared/context/ToastContext";
 
 type Props = {
   children: ReactNode;
@@ -29,10 +30,11 @@ export function AppShell({ children }: Props) {
 console.log("This is getCurrentUser",getCurrentUser());
 
 const { currentUser, logout } = useAuth();
-
+const { showToast } = useToast();
 const handleLogout = () => {
   logout();
   router.navigate("/login");
+  showToast("Logged out successfully.", "success");
 };
 
 console.log("This is CurrentUser",getCurrentUser());

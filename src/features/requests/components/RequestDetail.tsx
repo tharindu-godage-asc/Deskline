@@ -149,11 +149,11 @@ export function RequestDetail({
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm">
               Request ID: {request.id}
             </p>
 
-            <h2 className="mt-1 text-2xl font-bold text-gray-900">
+            <h2 className="mt-1 text-2xl font-bold">
               {request.title}
             </h2>
           </div>
@@ -166,7 +166,7 @@ export function RequestDetail({
         {/* Request Information */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm">
               Priority
             </p>
             <p className="mt-1 font-medium capitalize">
@@ -175,7 +175,7 @@ export function RequestDetail({
           </div>
 
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm ">
               Category
             </p>
             <p className="mt-1 font-medium capitalize">
@@ -184,7 +184,7 @@ export function RequestDetail({
           </div>
 
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm">
               Requester
             </p>
             <p className="mt-1 font-medium">
@@ -193,7 +193,7 @@ export function RequestDetail({
           </div>
 
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm">
               Assignee
             </p>
             <p className="mt-1 font-medium">
@@ -740,7 +740,7 @@ export function RequestDetail({
         <div className="border-t pt-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm">
                 Created At
               </p>
 
