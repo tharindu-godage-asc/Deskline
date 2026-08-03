@@ -15,7 +15,7 @@ import { Card } from "../../../shared/ui/Card";
 
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
-import { setPending } from "../api/requestActions";
+import { reassignRequest, setPending } from "../api/requestActions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../shared/hooks/useMotion";
 import { useMemo } from "react";
@@ -212,7 +212,7 @@ export function RequestDetail({
 {/* /////-----------------------------Testing Purposes Only----------------------------\\\\\ */}
 
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             variant="secondary"
             onClick={async () => {
               try {
@@ -245,9 +245,9 @@ export function RequestDetail({
             }}
           >
           CANCEL
-        </Button>
+        </Button> */}
 
-          <Button
+          {/* <Button
             onClick={async () => {
               try {
                 await updateRequest(
@@ -272,7 +272,7 @@ export function RequestDetail({
             }}
           >
             Reassign
-          </Button>
+          </Button> */}
 
             <Button
               variant="secondary"
@@ -328,7 +328,7 @@ export function RequestDetail({
               Set Open
             </Button>
 
-          <Button
+          {/* <Button
             variant="secondary"
             onClick={async () => {
               try {
@@ -361,9 +361,9 @@ export function RequestDetail({
             }}
           >
             TEST CLOSE
-          </Button>
+          </Button> */}
 
-          <Button
+          {/* <Button
             variant="secondary"
             onClick={async () => {
               try {
@@ -388,7 +388,7 @@ export function RequestDetail({
             }}
           >
             Assign To Me
-          </Button>
+          </Button> */}
         </div>
 
 {/* /////--------------------------------------------------------------------------------\\\\\ */}
@@ -527,13 +527,17 @@ export function RequestDetail({
                                 ))}
                             </select>
 
-                            {/* <Button 
+                            <Button 
                               onClick={() => {
                                 try {
                                   reassignRequest(
                                     currentUser,
                                     request,
                                     selectedAssignee
+                                  );
+                                  showToast(
+                                    "Request reassigned.",
+                                    "success"
                                   );
                                 } catch (error) {
                                   alert(
@@ -542,7 +546,7 @@ export function RequestDetail({
                                 }
                               }}>
                               Reassign
-                            </Button> */}
+                            </Button>
                           </div>
                         )}
               </div>
