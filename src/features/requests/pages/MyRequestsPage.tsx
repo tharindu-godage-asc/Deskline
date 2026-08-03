@@ -10,12 +10,23 @@ import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { DEFAULT_REQUEST_FILTERS } from "../../../shared/types/filters";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
+import { useSearchParams } from "react-router-dom";
 
 export function MyRequestsPage() {
-  const [filters, setFilters] = useState<RequestFilters>(
-     DEFAULT_REQUEST_FILTERS
-  );
+
   const { currentUser } = useAuth();
+  const [searchParams, setSearchParams] =
+  useSearchParams();
+
+    const initialStatus =
+  (searchParams.get("status") as RequestFilters["status"]) ??
+  "all";
+
+const [filters, setFilters] =
+  useState<RequestFilters>({
+    ...DEFAULT_REQUEST_FILTERS,
+    status: initialStatus,
+  });
   const [requests, setRequests] = useState<Request[]>([]);
   console.log(
   "Requests State:",
@@ -74,6 +85,30 @@ export function MyRequestsPage() {
 
   loadRequests();
 }, [currentUser.id]);
+
+useEffect(() => {
+  const params =
+    new URLSearchParams(
+      searchParams
+    );
+
+  if (
+    filters.status === "all"
+  ) {
+    params.delete("status");
+  } else {
+    params.set(
+      "status",
+      filters.status
+    );
+  }
+
+  setSearchParams(params);
+}, [
+  filters.status,
+  setSearchParams,
+]);
+
 
 if (loading) {
   return <LoadingState />;
