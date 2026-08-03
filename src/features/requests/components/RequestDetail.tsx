@@ -15,7 +15,7 @@ import { Card } from "../../../shared/ui/Card";
 
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
-import { assignToMe, setPending, reassignRequest } from "../api/requestActions";
+import { setPending } from "../api/requestActions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../shared/hooks/useMotion";
 import { useMemo } from "react";
@@ -287,7 +287,7 @@ export function RequestDetail({
                   );
 
                   showToast(
-                    "Request updated.",
+                    "Request moved to pending.",
                     "success"
                   );
                 } catch {
@@ -299,6 +299,33 @@ export function RequestDetail({
               }}
             >
               Set Pending
+            </Button>
+
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                try {
+                  await updateRequest(
+                    request.id,
+                    {
+                      status: "open",
+                    },
+                    currentUser.id
+                  );
+
+                  showToast(
+                    "Request updated.",
+                    "success"
+                  );
+                } catch {
+                  showToast(
+                    "Failed to update request.",
+                    "error"
+                  );
+                }
+              }}
+            >
+              Set Open
             </Button>
 
           <Button
@@ -396,18 +423,28 @@ export function RequestDetail({
                       currentUser.id && (
                       <Button 
                         variant="secondary"
-                        onClick={() => {
-                            try {
-                              assignToMe(
-                                currentUser,
-                                request
-                              );
-                            } catch (error) {
-                              alert(
-                                (error as Error).message
-                              );
-                            }
-                          }}>
+                        onClick={async () => {
+                          try {
+                            await updateRequest(
+                              request.id,
+                              {
+                                assigneeId:
+                                  currentUser.id,
+                              },
+                              currentUser.id
+                            );
+
+                            showToast(
+                              "Assigned to you.",
+                              "success"
+                            );
+                          } catch {
+                            showToast(
+                              "Failed to assign request.",
+                              "error"
+                            );
+                          }
+                        }}>
                         Assign To Me
                       </Button>
                     )}
@@ -490,7 +527,7 @@ export function RequestDetail({
                                 ))}
                             </select>
 
-                            <Button 
+                            {/* <Button 
                               onClick={() => {
                                 try {
                                   reassignRequest(
@@ -505,7 +542,7 @@ export function RequestDetail({
                                 }
                               }}>
                               Reassign
-                            </Button>
+                            </Button> */}
                           </div>
                         )}
               </div>
@@ -619,41 +656,41 @@ export function RequestDetail({
               ? "Are you sure you want to cancel this request?"
               : "Are you sure you want to close this request?"
           }
-          onConfirm={() => {
+          onConfirm={async () => {
             try {
-              if (
-                confirmAction === "cancel"
-              ) {
-                updateRequest(
-                  request.id,
-                  {
-                    status: "cancelled",
-                  },
-                  currentUser.id
-                );
+             if (
+                    confirmAction === "cancel"
+                  ) {
+                    await updateRequest(
+                      request.id,
+                      {
+                        status: "cancelled",
+                      },
+                      currentUser.id
+                    );
 
-                showToast(
-                  "Request cancelled.",
-                  "success"
-                );
-              }
+                    showToast(
+                      "Request cancelled.",
+                      "success"
+                    );
+                  }
 
-              if (
-                confirmAction === "close"
-              ) {
-                 updateRequest(
-                  request.id,
-                  {
-                    status: "closed",
-                  },
-                  currentUser.id
-                );
+                  if (
+                    confirmAction === "close"
+                  ) {
+                    await updateRequest(
+                      request.id,
+                      {
+                        status: "closed",
+                      },
+                      currentUser.id
+                    );
 
-                showToast(
-                  "Request closed.",
-                  "success"
-                );
-              }
+                    showToast(
+                      "Request closed.",
+                      "success"
+                    );
+                  }
             } catch (error) {
               alert(
                 (error as Error).message

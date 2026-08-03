@@ -16,51 +16,101 @@ type PatchRequestBody = {
 };
 
 
+function forbidden() {
+  return HttpResponse.json(
+    {
+      message: "Forbidden",
+    },
+    {
+      status: 403,
+    }
+  );
+}
+
+function invalidTransition() {
+  return HttpResponse.json(
+    {
+      message:
+        "Invalid status transition",
+    },
+    {
+      status: 403,
+    }
+  );
+}
+
+function notFound() {
+  return HttpResponse.json(
+    {
+      message: "Request not found",
+    },
+    {
+      status: 404,
+    }
+  );
+}
+
+function badRequest() {
+  return HttpResponse.json(
+    {
+      message : "Bad Request",
+    },
+    { 
+    status: 400,
+    }
+  );
+}
+
+function unauthorized() {
+  return HttpResponse.json(
+    {
+      message: "Unauthorized",
+    },
+    {
+      status: 401,
+    }
+  );
+}
+
 export const requestHandlers = [
 
 //  GET all requests
-  http.get(
-    "/requests",
-    ({ request }) => {
-      const userId =
-        request.headers.get(
-          "x-user-id"
-        );
-
-      const user = users.find(
-        (u) =>
-          u.id === userId
+ http.get(
+  "/requests",
+  ({ request }) => {
+    const userId =
+      request.headers.get(
+        "x-user-id"
       );
 
-      if (!user) {
-        return HttpResponse.json(
-          {
-            message:
-              "Unauthorized",
-          },
-          {
-            status: 401,
-          }
-        );
-      }
+    const user = users.find(
+      (u) =>
+        u.id === userId
+    );
 
-      if (
-        user.role ===
-        "requester"
-      ) {
-        return HttpResponse.json(
-          requests.filter(
-            (request) =>
-              request.requesterId ===
-              user.id
-          )
-        );
-      }
+    if (!user) {
+      return unauthorized();
+    }
 
+    // Requesters only see their own requests
+    if (
+      user.role ===
+      "requester"
+    ) {
       return HttpResponse.json(
-        requests
+        requests.filter(
+          (request) =>
+            request.requesterId ===
+            user.id
+        )
       );
     }
+
+    // Technicians/Admins see all requests
+    return HttpResponse.json(
+      requests
+    );
+  }
 ),
 
 //  GET Request by ID
@@ -77,15 +127,7 @@ export const requestHandlers = [
       );
 
     if (!request) {
-      return HttpResponse.json(
-        {
-          message:
-            "Request not found",
-        },
-        {
-          status: 404,
-        }
-      );
+      return notFound()
     }
 
     const messages =
@@ -169,15 +211,7 @@ http.post(
       );
 
     if (!req) {
-      return HttpResponse.json(
-        {
-          message:
-            "Request not found",
-        },
-        {
-          status: 404,
-        }
-      );
+      return notFound();
     }
 
     if (
@@ -204,14 +238,7 @@ http.post(
         | null;
 
     if (!body || !body.author || !body.message) {
-      return HttpResponse.json(
-        {
-          message: "Invalid request body",
-        },
-        {
-          status: 400,
-        }
-      );
+      return badRequest();
     }
 
     const newComment = {
@@ -252,15 +279,14 @@ http.patch(
       );
 
     if (!targetRequest) {
-      return HttpResponse.json(
-        {
-          message: "Request not found",
-        },
-        {
-          status: 404,
-        }
-      );
+      return notFound();
     }
+
+    console.log(
+      "Before PATCH:",
+      structuredClone(targetRequest)
+    );
+
     const userId =
       request.headers.get(
         "x-user-id"
@@ -271,55 +297,122 @@ http.patch(
     );
 
     if (!user) {
-      return HttpResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        {
-          status: 401,
-        }
-      );
+      return unauthorized();
+    }
+
+    // Terminal states
+    if (
+      targetRequest.status ===
+        "closed" ||
+      targetRequest.status ===
+        "cancelled"
+    ) {
+      return forbidden();;
+    }
+
+    // Cancel
+    if (
+      body.status ===
+      "cancelled"
+    ) {
+      const isOwner =
+        targetRequest.requesterId ===
+        user.id;
+
+      if (
+        user.role !==
+          "requester" ||
+        !isOwner ||
+        targetRequest.status !==
+          "open"
+      ) {
+        return forbidden();
+      }
+    }
+
+    // Close request
+    if (body.status === "closed") {
+      if (user.role !== "admin") {
+        return forbidden();
+      }
+
+      if (
+        targetRequest.status !== "open" &&
+        targetRequest.status !== "pending"
+      ) {
+        return invalidTransition();
+      }
+    }
+
+    // Requesters cannot move open/pending
+    if (
+      (body.status ===
+        "pending" ||
+        body.status ===
+          "open") &&
+      user.role ===
+        "requester"
+    ) {
+      return forbidden();
+    }
+
+    // open -> pending only
+    if (
+      body.status ===
+        "pending" &&
+      targetRequest.status !==
+        "open"
+    ) {
+      return invalidTransition();
+    }
+
+    // pending -> open only
+    if (
+      body.status ===
+        "open" &&
+      targetRequest.status !==
+        "pending"
+    ) {
+      return invalidTransition();
+    }
+
+    // Reassign
+    if (
+      body.assigneeId !== undefined
+    ) {
+      const assigningToSelf =
+        body.assigneeId === user.id;
+
+      // Requesters can never assign
+      if (
+        user.role === "requester"
+      ) {
+        return forbidden();
+      }
+
+      // Technicians can only assign to themselves
+      if (
+        user.role === "technician" &&
+        !assigningToSelf
+      ) {
+        return forbidden();
+      }
+
+      // Admins are allowed
+    }
+
+    // Apply updates
+    if (body.status) {
+      targetRequest.status =
+        body.status;
     }
 
     if (
-      body.status === "pending" &&
-      user.role === "requester"
+      body.assigneeId !==
+      undefined
     ) {
-      return HttpResponse.json(
-        {
-          message: "Forbidden",
-        },
-        {
-          status: 403,
-        }
-      );
-    }
-
-    if (
-      body.assigneeId &&
-      user.role !== "admin"
-    ) {
-      return HttpResponse.json(
-        {
-          message: "Forbidden",
-        },
-        {
-          status: 403,
-        }
-      );
-    }
-    if (
-      body.status === "closed" &&
-      user.role === "requester"
-    ) {
-      return HttpResponse.json(
-        {
-          message: "Forbidden",
-        },
-        {
-          status: 403,
-        }
-      );
+      targetRequest.assigneeId =
+        body.assigneeId;
     }
 
     targetRequest.updatedAt =
@@ -327,9 +420,14 @@ http.patch(
         .toISOString()
         .split("T")[0];
 
+    console.log(
+      "After PATCH:",
+      structuredClone(targetRequest)
+    );
+
     return HttpResponse.json(
       targetRequest
     );
   }
-),
+)
 ]
