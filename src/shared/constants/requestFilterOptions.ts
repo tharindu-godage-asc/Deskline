@@ -20,3 +20,18 @@ export const CATEGORY_OPTIONS = [
   { value: "facilities", label: "Facilities" },
   { value: "access", label: "Access" },
 ];
+
+export const ASSIGNEE_OPTIONS = [
+  {
+    value: "all",
+    label: "All",
+  },
+  {
+    value: "unassigned",
+    label: "Unassigned",
+  },
+  {
+    value: "me",
+    label: "Me",
+  },
+];

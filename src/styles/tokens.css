@@ -28,6 +28,12 @@
   --category-software: #8b5cf6;
   --category-facilities: #14b8a6;
   --category-access: #ec4899;
+
+  --color-logo-primary: #2563eb;
+  --color-logo-secondary: var(--color-text);
+
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
 }
 
 [data-theme="dark"] {
@@ -41,4 +47,15 @@
   --status-pending: #facc15;
   --status-closed: #60a5fa;
   --status-cancelled: #f87171;
+
+  --color-logo-primary: #60a5fa;
+  --color-logo-secondary: var(--color-text);
+}
+
+[data-motion="reduce"] *,
+[data-motion="reduce"] *::before,
+[data-motion="reduce"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }

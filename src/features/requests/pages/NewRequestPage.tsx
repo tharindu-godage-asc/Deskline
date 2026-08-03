@@ -1,13 +1,91 @@
+import { useState } from "react";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
+import { requestSchema } from "../schemas/requestSchema";
+import { getCurrentUser } from "../../../shared/api/auth";
+import {createRequest} from "../../../shared/api/requestApi";
+import { useToast } from "../../../shared/context/ToastContext";
+
 
 export function NewRequestPage() {
-  const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    console.log("Submit request");
-  };
+const currentUser = getCurrentUser();
+const [title, setTitle] = useState("");
+const [description, setDescription] = useState("");
+const [category, setCategory] = useState("");
+const [priority, setPriority] = useState("medium");
+const [errors, setErrors] = useState({
+  title: "",
+  category: "",
+  priority: "",
+  description: "",
+});
+const [isSubmitting, setIsSubmitting] = useState(false);
+const { showToast } = useToast();
+
+
+
+const handleSubmit = async (
+      event: React.FormEvent<HTMLFormElement>
+      ) => {
+        event.preventDefault();
+          const result = requestSchema.safeParse({
+              title,
+              category,
+              priority,
+              description,
+            });
+          if (!result.success) {
+            const fieldErrors =
+              result.error.flatten().fieldErrors;
+
+            setErrors({
+              title:
+                fieldErrors.title?.[0] ?? "",
+              category:
+                fieldErrors.category?.[0] ?? "",
+              priority:
+                fieldErrors.priority?.[0] ?? "",
+              description:
+                fieldErrors.description?.[0] ?? "",
+            });
+            return;
+          }
+          setErrors({
+            title: "",
+            category: "",
+            priority: "",
+            description: "",
+          });
+          try{
+            setIsSubmitting(true)
+            await createRequest({
+              title,
+              category,
+              priority,
+              description,
+              requesterId:
+                currentUser.id,
+              author:
+                currentUser.name,
+            });
+            showToast(
+              "Request created successfully.",
+              "success"
+            );
+            setTitle("");
+            setCategory("");
+            setPriority("medium");
+            setDescription("");
+        }catch {  
+          showToast(
+              "Request Creation Failed",
+              "error"
+            );
+        }
+        finally{
+          setIsSubmitting(false);
+        }
+          }
 
   return (
     <Card>
@@ -37,9 +115,24 @@ export function NewRequestPage() {
             <input
               id="title"
               type="text"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  title: "",
+                }));
+              }}
               placeholder="Brief summary of the issue"
               className="w-full rounded-md border px-3 py-2"
             />
+
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.title}
+              </p>
+            )}
+
           </div>
 
           <div>
@@ -51,9 +144,17 @@ export function NewRequestPage() {
             </label>
 
             <select
-              id="category"
-              className="w-full rounded-md border px-3 py-2"
-            >
+                id="category"
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setErrors((prev) => ({
+                    ...prev,
+                    category: "",
+                  }));
+                }}
+                className="w-full rounded-md border px-3 py-2"
+              >
               <option value="">
                 Select a category
               </option>
@@ -74,6 +175,12 @@ export function NewRequestPage() {
                 Access
               </option>
             </select>
+
+            {errors.category && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.category}
+              </p>
+            )}
           </div>
 
           <div>
@@ -86,12 +193,25 @@ export function NewRequestPage() {
 
             <select
               id="priority"
+              value={priority}
+              onChange={(e) => {
+                setPriority(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  priority: "",
+                }));
+              }}
               className="w-full rounded-md border px-3 py-2"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
+            {errors.priority && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.priority}
+                </p>
+              )}
           </div>
 
           <div>
@@ -105,14 +225,32 @@ export function NewRequestPage() {
             <textarea
               id="description"
               rows={5}
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  description: "",
+                }));
+              }}
               placeholder="Provide details about the issue..."
               className="w-full rounded-md border px-3 py-2"
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.description}
+              </p>
+            )}
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit">
-              Submit Request
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting
+                ? "Creating..."
+                : "Submit Request"}
             </Button>
           </div>
         </form>

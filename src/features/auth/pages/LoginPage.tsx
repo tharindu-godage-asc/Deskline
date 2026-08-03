@@ -1,15 +1,87 @@
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
+import { useLogin } from "../../../shared/hooks/useLogin";
+import { useState } from "react";
+import { loginSchema } from "../../requests/schemas/loginSchema";
+import { useToast } from "../../../shared/context/ToastContext";
 
 export function LoginPage() {
-  const handleLogin = () => {
-    console.log("Login clicked");
-  };
+
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [errors, setErrors] = useState({
+  email: "",
+  password: "",
+  auth: "",
+});
+const [isLoading, setIsLoading] = useState(false);
+
+const { login } = useLogin();
+
+const { showToast } = useToast();
+
+const handleLogin = async () => {
+  const result = loginSchema.safeParse({
+    email,
+    password,
+  });
+
+  if (!result.success) {
+    const fieldErrors =
+      result.error.flatten().fieldErrors;
+
+    setErrors({
+      email:
+        fieldErrors.email?.[0] ?? "",
+      password:
+        fieldErrors.password?.[0] ?? "",
+      auth: "",
+    });
+
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+    setErrors({
+      email: "",
+      password: "",
+      auth: "",
+    });
+
+    await login({
+      email,
+      password,
+    });
+    showToast(
+      "Login successful.",
+      "success"
+    );
+      } catch {
+        setErrors({
+          email: "",
+          password: "",
+          auth: "Invalid email or password.",
+        });
+        showToast(
+        "Invalid email or password.",
+        "error"
+      );
+        } finally {    
+          setIsLoading(false);  
+        }
+    };
+
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card>
-        <div className="w-full max-w-md space-y-6">
+    <div
+        className="flex min-h-screen items-center justify-center w-full"
+        style={{
+          background: "var(--color-background)",
+        }}
+      >
+      <Card className="w-full max-w-md">
+        <div className="w-full space-y-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
               Support Portal
@@ -32,9 +104,24 @@ export function LoginPage() {
               <input
                 id="email"
                 type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: "",
+                    auth: "",
+                  }));
+                }}
                 placeholder="you@example.com"
                 className="w-full rounded-md border px-3 py-2"
               />
+              {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.email}
+                  </p>
+                )}
             </div>
 
             <div>
@@ -48,24 +135,69 @@ export function LoginPage() {
               <input
                 id="password"
                 type="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: "",
+                    auth: "",
+                  }));
+                }}
                 placeholder="••••••••"
                 className="w-full rounded-md border px-3 py-2"
               />
+              {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password}
+                  </p>
+                )}
             </div>
+
+            {errors.auth && (
+              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                {errors.auth}
+              </div>
+            )}
 
             <Button
               type="button"
               className="w-full"
               onClick={handleLogin}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading
+                ? "Signing In..."
+                : "Sign In"}
             </Button>
           </form>
 
-          <p className="text-center text-xs text-gray-500">
-            Authentication is stubbed for now and will be implemented
-            in a later stage.
-          </p>
+          <div className="rounded-lg border p-4 text-sm">
+            <p className="mb-2 font-semibold">
+              Demo Accounts
+            </p>
+
+            <div className="space-y-2">
+              <p>
+                <strong>Requester</strong><br />
+                requester@deskline.com<br />
+                password123
+              </p>
+
+              <p>
+                <strong>Technician</strong><br />
+                tech@deskline.com<br />
+                password123
+              </p>
+
+              <p>
+                <strong>Admin</strong><br />
+                admin@deskline.com<br />
+                password123
+              </p>
+            </div>
+          </div>
         </div>
       </Card>
     </div>

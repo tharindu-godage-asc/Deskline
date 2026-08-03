@@ -7,51 +7,28 @@
  * to be developed and tested without relying on an external API.
  */
 
-import type {
-  Request,
-  User
-} from "../types";
+import type { Request } from "../types";
 
-export const users: User[] = [
-  {
-    id: "u1",
-    name: "John Smith",
-    email: "john@test.com",
-    role: "requester",
-  },
-  {
-    id: "u2",
-    name: "Sarah Wilson",
-    email: "sarah@test.com",
-    role: "technician",
-  },
-  {
-    id: "u3",
-    name: "Mike Admin",
-    email: "admin@test.com",
-    role: "admin",
-  },
-];
 
-export const requests: Request[] = [
+const baseRequests: Request[] = [
   {
     id: "r1",
     title: "Laptop screen flickering",
     status: "open",
     priority: "high",
     category: "hardware",
-    requesterId: "u1",
-    assigneeId: "u2",
+    requesterId: "user-1",
+    assigneeId: "user-3",
     createdAt: "2025-07-22",
     updatedAt: "2025-07-22",
   },
   {
     id: "r2",
-    title: "VPN not connecting",
+    title: "VPN not connecting-asignn test",
     status: "pending",
     priority: "medium",
     category: "software",
-    requesterId: "u1",
+    requesterId: "user-1",
     assigneeId: null,
     createdAt: "2025-07-21",
     updatedAt: "2025-07-22",
@@ -62,9 +39,156 @@ export const requests: Request[] = [
     status: "closed",
     priority: "low",
     category: "access",
-    requesterId: "u1",
-    assigneeId: "u3",
+    requesterId: "user-1",
+    assigneeId: "user-2",
     createdAt: "2025-07-20",
     updatedAt: "2025-07-21",
   },
+    {
+    id: "r4",
+    title: "Laptop not switching on",
+    status: "cancelled",
+    priority: "high",
+    category: "hardware",
+    requesterId: "user-1",
+    assigneeId: "user-3",
+    createdAt: "2025-07-22",
+    updatedAt: "2025-07-22",
+  },
+    {
+    id: "r6",
+    title: "Laptop screen flickering",
+    status: "open",
+    priority: "high",
+    category: "hardware",
+    requesterId: "user-2",
+    assigneeId: "user-3",
+    createdAt: "2025-07-22",
+    updatedAt: "2025-07-22",
+  },
+  {
+    id: "r7",
+    title: "VPN not connecting",
+    status: "pending",
+    priority: "medium",
+    category: "software",
+    requesterId: "user-2",
+    assigneeId: "user-3",
+    createdAt: "2025-07-21",
+    updatedAt: "2025-07-22",
+  },
+  {
+    id: "r8",
+    title: "Need meeting room access",
+    status: "closed",
+    priority: "low",
+    category: "access",
+    requesterId: "user-2",
+    assigneeId: "user-2",
+    createdAt: "2025-07-20",
+    updatedAt: "2025-07-21",
+  },
+    {
+    id: "r9",
+    title: "Laptop not switching on",
+    status: "cancelled",
+    priority: "high",
+    category: "hardware",
+    requesterId: "user-2",
+    assigneeId: "user-3",
+    createdAt: "2025-07-22",
+    updatedAt: "2025-07-22",
+  }
+  
+];
+
+const statuses = [
+  "open",
+  "pending",
+  "closed",
+  "cancelled",
+] as const;
+
+const priorities = [
+  "low",
+  "medium",
+  "high",
+] as const;
+
+const categories = [
+  "hardware",
+  "software",
+  "facilities",
+  "access",
+] as const;
+
+// const generatedRequests: Request[] =
+//   Array.from(
+//     { length: 600 },
+//     (_, index) => ({
+//       id: `generated-${index + 1}`,
+//       title: `Generated Request ${index + 1}`,
+//       status:
+//         statuses[
+//           index %
+//             statuses.length
+//         ],
+
+//       priority:
+//         priorities[
+//           index %
+//             priorities.length
+//         ],
+
+//       category:
+//         categories[
+//           index %
+//             categories.length
+//         ],
+
+//       requesterId:
+//         index % 2 === 0
+//           ? "user-1"
+//           : "user-4",
+
+//       assigneeId:
+//         index % 5 === 0
+//           ? null
+//           : "user-2",
+
+//       createdAt: "2025-07-22",
+//       updatedAt: "2025-07-22",
+//     })
+//   );
+
+export const UserComments = [
+  {
+    id: "c1",
+    requestId: "r1",
+    author: "John Doe",
+    message:
+      "My laptop screen started flickering this morning.",
+    createdAt: "2025-07-22 09:15",
+  },
+  {
+    id: "c2",
+    requestId: "r1",
+    author: "John Wayne",
+    message:
+      "I've assigned this issue to myself and will investigate.",
+    createdAt: "2025-07-22 10:30",
+  },
+  {
+    id: "c3",
+    requestId: "r2",
+    author: "Jane Smith",
+    message:
+      "I'm also experiencing this VPN issue.",
+    createdAt: "2025-07-22 11:45",
+  },
+];
+
+export const requests = [
+  ...baseRequests,
+  // ...generatedRequests,
 ];

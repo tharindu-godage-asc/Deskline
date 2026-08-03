@@ -1,7 +1,7 @@
 import { type ButtonHTMLAttributes } from "react";
 import { type VariantProps } from "class-variance-authority";
 
-import { buttonVariants } from "./Button.Variants";
+import { buttonVariants } from "./button.variants";
 import { cn } from "../../lib/cn";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> &

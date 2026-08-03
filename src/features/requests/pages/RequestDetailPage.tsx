@@ -1,19 +1,22 @@
-// RequestDetailPage.tsx
-
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
-import { getRequestById } from "../../../shared/services/requests";
 import { RequestDetail } from "../components/RequestDetail";
+import { getRequestById } from "../../../shared/api/requestApi";
+import { ErrorState } from "../components/states/ErrorState";
+import { LoadingState } from "../components/states/LoadingState";
 
 export function RequestDetailPage() {
   const { id } = useParams();
-  const [request, setRequest] = useState<Awaited<ReturnType<typeof getRequestById>>>(undefined);
+ 
   const [isLoading, setIsLoading] = useState(true);
+  const [request, setRequest] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!id) {
-      setRequest(undefined);
+      setRequest(null);
       setIsLoading(false);
       return;
     }
@@ -21,12 +24,29 @@ export function RequestDetailPage() {
     let cancelled = false;
     setIsLoading(true);
 
-    void getRequestById(id).then((result) => {
-      if (!cancelled) {
-        setRequest(result);
-        setIsLoading(false);
-      }
-    });
+    void getRequestById(id)
+      .then((result) => {
+        if (!cancelled) {
+          setRequest(result.request);
+          setMessages(result.messages);
+          setIsLoading(false);
+          console.log(
+            "Request API Response - Comments + Details:",
+            result
+          );
+
+          console.log(
+            "Comments:",
+            result.messages
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(true);
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -34,7 +54,17 @@ export function RequestDetailPage() {
   }, [id]);
 
   if (isLoading) {
-    return null;
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        onRetry={() =>
+          window.location.reload()
+        }
+      />
+    );
   }
 
   if (!request) {
@@ -49,6 +79,7 @@ export function RequestDetailPage() {
   return (
     <RequestDetail
       request={request}
+      messages={messages}
     />
   );
 }

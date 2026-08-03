@@ -12,6 +12,16 @@
 import type { Request } from "../../../shared/types";
 import { Card } from "../../../shared/ui/Card";
 import { Badge } from "../../../shared/ui/badge/Badge";
+import {useNavigate} from "react-router-dom";
+import { Button } from "../../../shared/ui/button/Button";
+import { getCurrentUser } from "../../../shared/api/auth";
+import { isRequester } from "../../../shared/lib/permissions";
+import { useState } from "react";
+
+
+import { LoadingState } from "../components/states/LoadingState";
+import { EmptyState } from "../components/states/EmptyState";
+import { ErrorState } from "./states/ErrorState";
 
 type Props = {
   requests: Request[];
@@ -20,16 +30,64 @@ type Props = {
 export function RequestList({
   requests,
 }: Props) {
+
+  const navigate = useNavigate();
+
+  const currentUser = getCurrentUser();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleViewDetails = (requestId: string) => {
+    navigate(`/requests/${requestId}`);
+  }
+
+  const handleNewRequest = () => {
+    navigate("/requests/new");
+  }
+
+  if (loading) return <LoadingState />;
+
+  if (requests.length === 0)
+  return (
+    <EmptyState title="No requests" message="There are no requests." />
+  );
+
+  if (error) {
+  return (
+    <ErrorState
+      onRetry={() =>
+        setError(false)
+      }
+    />
+  );
+}
+
+console.log("Current User:", currentUser);
+console.log("All Requests:", requests);
+
   return (
     <div className="space-y-3">
-      <h2 className="text-xl font-semibold">
-        Requests
-      </h2>
+      <div className="flex items-center justify-between mt-5">
+        <h2 className="text-xl font-semibold">
+          Requests
+        </h2>
+
+        {isRequester(currentUser.role) && (
+          <Button
+            className="mr-4"
+            variant="primary"
+            onClick={handleNewRequest}
+          >
+            New Request
+          </Button>
+        )}
+      </div>
 
       {requests.map((request) => (
         <Card key={request.id}>
           <div className="flex items-center justify-between">
-            <div>
+            <div className="space-y-2">
               <h3 className="font-semibold">
                 {request.title}
               </h3>
@@ -37,11 +95,20 @@ export function RequestList({
               <p className="text-sm opacity-70">
                 {request.category} • {request.priority}
               </p>
+
+              <div>
+                <Badge variant={request.status}>
+                  {request.status}
+                </Badge>
+              </div>
             </div>
 
-            <Badge variant={request.status}>
-              {request.status}
-            </Badge>
+
+
+            <Button variant="secondary"
+            onClick={() => handleViewDetails(request.id)}>
+              View Details
+            </Button>
           </div>
         </Card>
       ))}
