@@ -15,7 +15,7 @@ import { Card } from "../../../shared/ui/Card";
 
 import { useAuth } from "../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
-import { reassignRequest, setPending } from "../api/requestActions";
+import { setPending } from "../api/requestActions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../shared/hooks/useMotion";
 import { useMemo } from "react";
@@ -62,6 +62,7 @@ export function RequestDetail({
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const { reduceMotion } = useMotion();
+  const [ isReassigning,setIsReassigning] = useState(false);
 
   useEffect(() => {
   async function loadUsers() {
@@ -274,7 +275,7 @@ export function RequestDetail({
             Reassign
           </Button> */}
 
-            <Button
+            {/* <Button
               variant="secondary"
               onClick={async () => {
                 try {
@@ -299,9 +300,9 @@ export function RequestDetail({
               }}
             >
               Set Pending
-            </Button>
+            </Button> */}
 
-            <Button
+            {/* <Button
               variant="secondary"
               onClick={async () => {
                 try {
@@ -326,7 +327,7 @@ export function RequestDetail({
               }}
             >
               Set Open
-            </Button>
+            </Button> */}
 
           {/* <Button
             variant="secondary"
@@ -455,23 +456,34 @@ export function RequestDetail({
                       currentUser.role
                     ) &&
                     request.status === "open" && (
-                      <Button 
-                        variant="secondary"
-                        onClick={() => {
-                              try {
-                                setPending(
-                                  currentUser,
-                                  request
-                                );
-                              } catch (error) {
-                                alert(
-                                  (error as Error).message
-                                );
-                              }
-                          }}>
-                        Set Pending
-                      </Button>
+                                  <Button
+                                    variant="secondary"
+                                    onClick={async () => {
+                                      try {
+                                        await updateRequest(
+                                          request.id,
+                                          {
+                                            status: "pending",
+                                          },
+                                          currentUser.id
+                                        );
+
+                                        showToast(
+                                          "Request moved to pending.",
+                                          "success"
+                                        );
+                                      } catch {
+                                        showToast(
+                                          "Failed to update request.",
+                                          "error"
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    Set Pending
+                                  </Button>
                     )}
+                    
 
             {/* CloseRequest */}
                     {currentUser &&
@@ -527,25 +539,41 @@ export function RequestDetail({
                                 ))}
                             </select>
 
-                            <Button 
-                              onClick={() => {
+                            <Button
+                              disabled={
+                                !selectedAssignee ||
+                                isReassigning
+                              }
+                              onClick={async () => {
                                 try {
-                                  reassignRequest(
-                                    currentUser,
-                                    request,
-                                    selectedAssignee
+                                  setIsReassigning(true);
+
+                                  await updateRequest(
+                                    request.id,
+                                    {
+                                      assigneeId:
+                                        selectedAssignee,
+                                    },
+                                    currentUser.id
                                   );
+
                                   showToast(
                                     "Request reassigned.",
                                     "success"
                                   );
-                                } catch (error) {
-                                  alert(
-                                    (error as Error).message
+                                } catch {
+                                  showToast(
+                                    "Failed to reassign request.",
+                                    "error"
                                   );
+                                } finally {
+                                  setIsReassigning(false);
                                 }
-                              }}>
-                              Reassign
+                              }}
+                            >
+                              {isReassigning
+                                ? "Reassigning..."
+                                : "Reassign"}
                             </Button>
                           </div>
                         )}
