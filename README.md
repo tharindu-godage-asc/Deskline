@@ -101,13 +101,29 @@ As development progresses, the project will be extended with:
 - Accessibility improvements
 - Performance optimizations for large datasets
 
-## Queue Performance
+## How to Run the App
 
-The Queue contains more than 500 requests.
+1. Install dependencies with `npm install`.
+2. Start the development server with `npm run dev`.
+3. Open the local Vite URL shown in the terminal to view the app.
 
-Performance optimizations:
+## Why MSW Is Used
 
-- Generated fixture data (~600 requests)
-- Filtering memoized with useMemo
-- Search input debounced by 300 ms
-- Queue interactions remain responsive even with large datasets
+Mock Service Worker (MSW) is used to simulate API responses locally without needing a real backend. This allows frontend development, UI testing, and route behavior to be exercised reliably while keeping the app fully interactive in development.
+
+## Theme Approach
+
+The app uses CSS custom properties and a token-based styling system to support theming consistently across components. Colors and surface values are defined centrally in the shared styles layer, making it easier to adjust light and dark themes without scattering styling logic throughout the UI.
+
+## Reduce-Motion Approach
+
+The app respects reduced-motion preferences by using a lightweight motion hook and conditional animation behavior. When users prefer less motion, transitions and animated effects are minimized to improve comfort and accessibility.
+
+## Queue Performance Strategy
+
+The queue is designed to remain responsive even with a large dataset. The implementation uses:
+
+- Generated fixture data of roughly 600 requests
+- Memoized filtering with `useMemo`
+- Debounced search input updates with a 300 ms delay
+- Lightweight UI state updates to avoid unnecessary re-renders
