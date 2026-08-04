@@ -9,22 +9,24 @@
  * selected request and support additional interactions.
  */
 
-import { Badge } from "../../../shared/ui/badge/Badge";
-import { Button } from "../../../shared/ui/button/Button";
-import { Card } from "../../../shared/ui/Card";
+import { Badge } from "../../../../shared/ui/badge/Badge";
+import { Button } from "../../../../shared/ui/button/Button";
+import { Card } from "../../../../shared/ui/Card";
 
-import { useAuth } from "../../../shared/context/AuthContext";
-import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../shared/lib/permissions";
-import { setPending } from "../api/requestActions";
+import { useAuth } from "../../../../shared/context/AuthContext";
+import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../../shared/lib/permissions";
+import { setPending } from "../../api/requestActions";
 import { useState, useEffect } from "react";
-import { useMotion } from "../../../shared/hooks/useMotion";
+import { useMotion } from "../../../../shared/hooks/useMotion";
 import { useMemo } from "react";
 
-import { getUsers } from "../../../shared/api/userApi";
-import { addComment } from "../../../shared/api/requestApi";
-import { updateRequest } from "../../../shared/api/requestApi";
-import { useToast } from "../../../shared/context/ToastContext";
-import { ConfirmDialog } from "../../../shared/ui/modal/ConfirmDialog";
+import { getUsers } from "../../../../shared/api/userApi";
+import { addComment } from "../../../../shared/api/requestApi";
+import { updateRequest } from "../../../../shared/api/requestApi";
+import { useToast } from "../../../../shared/context/ToastContext";
+import { ConfirmDialog } from "../../../../shared/ui/modal/ConfirmDialog";
+
+import RequestDetailHeader from "./RequestDetailHeader";
 
 interface Props {
   request: any;
@@ -57,7 +59,6 @@ export function RequestDetail({
     [users, request.assigneeId]
   );
   const [confirmAction, setConfirmAction] =useState<"cancel" | "close" | null>(null);
-
   const [comments, setComments] = useState(messages);
   const [commentText, setCommentText] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -146,25 +147,22 @@ export function RequestDetail({
   return (
     <Card>
       <div className="space-y-6">
+
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm">
-              Request ID: {request.id}
-            </p>
-
-            <h2 className="mt-1 text-2xl font-bold">
-              {request.title}
-            </h2>
-          </div>
-
-          <Badge variant={request.status} size="lg">
-            {request.status}
-          </Badge>
-        </div>
+        <RequestDetailHeader
+          request={request}
+          requesterName={
+            requester?.name ??
+            "Unknown User"
+          }
+          assigneeName={
+            assignee?.name ??
+            "Unassigned"
+          }
+        />
 
         {/* Request Information */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="rounded-lg border p-4">
             <p className="text-sm">
               Priority
@@ -200,7 +198,7 @@ export function RequestDetail({
               {assignee?.name ?? "Unassigned"}
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* Actions */}
           <div className="border-t pt-4">

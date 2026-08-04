@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
-import { RequestDetail } from "../components/RequestDetail";
+import { RequestDetail } from "../components/request detail/RequestDetail";
 import { getRequestById } from "../../../shared/api/requestApi";
 import { ErrorState } from "../components/states/ErrorState";
 import { LoadingState } from "../components/states/LoadingState";
