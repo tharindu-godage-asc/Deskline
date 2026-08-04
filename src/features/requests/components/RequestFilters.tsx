@@ -1,14 +1,7 @@
 import { Field } from "../../../shared/ui/Field";
 import { Input } from "../../../shared/ui/Input";
 import { SelectFilter } from "../../../shared/ui/SelectFilter";
-
-import {
-  STATUS_OPTIONS,
-  PRIORITY_OPTIONS,
-  CATEGORY_OPTIONS,
-  ASSIGNEE_OPTIONS,
-} from "../../../shared/constants/requestFilterOptions";
-
+import { STATUS_OPTIONS, PRIORITY_OPTIONS, CATEGORY_OPTIONS, ASSIGNEE_OPTIONS } from "../../../shared/constants/requestFilterOptions";
 import type { RequestFilters as RequestFiltersType } from "../../../shared/types/filters";
 
 type Props = {
