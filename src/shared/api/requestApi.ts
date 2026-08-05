@@ -11,9 +11,10 @@ export async function getRequests(
     });
 
   if (!response.ok) {
-    throw new Error(
-      "Failed to load requests"
-    );
+    throw {
+      status: response.status,
+      message: "Failed to load requests",
+    };
   }
 
   return response.json();
@@ -28,9 +29,10 @@ export async function getRequestById(
     );
 
   if (!response.ok) {
-    throw new Error(
-      "Failed to load request"
-    );
+    throw {
+      status: response.status,
+      message: "Failed to load request",
+    };
   }
 
   return response.json();

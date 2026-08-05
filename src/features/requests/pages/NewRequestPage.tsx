@@ -167,8 +167,8 @@ const handleSubmit = async (
                 Software
               </option>
 
-              <option value="network">
-                Network
+              <option value="facilities">
+                Facilities
               </option>
 
               <option value="access">

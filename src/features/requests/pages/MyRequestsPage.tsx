@@ -11,6 +11,8 @@ import { DEFAULT_REQUEST_FILTERS } from "../../../shared/types/filters";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
 import { useSearchParams } from "react-router-dom";
+import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
+import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
 export function MyRequestsPage() {
 
@@ -33,7 +35,7 @@ const [filters, setFilters] =
   requests
 );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<ErrorInfo | null>(null);
   const debouncedSearch =
     useDebounce(
       filters.search,
@@ -64,7 +66,7 @@ const [filters, setFilters] =
   async function loadRequests() {
     try {
       setLoading(true);
-      setError(false);
+      setError(null);
 
       const data =
         await getRequests(
@@ -76,8 +78,12 @@ const [filters, setFilters] =
         );
 
       setRequests(data);
-    } catch {
-      setError(true);
+    } catch (error) {
+      setError(
+        mapStatusCodeToError(
+          (error as any)?.status
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -117,6 +123,8 @@ if (loading) {
 if (error) {
   return (
     <ErrorState
+      title={error.title}
+      description={error.description}
       onRetry={() =>
         window.location.reload()
       }

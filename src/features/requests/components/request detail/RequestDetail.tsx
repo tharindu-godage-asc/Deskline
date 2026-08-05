@@ -125,22 +125,22 @@ export function RequestDetail({
     }
   };
 
- if (
-      currentUser &&
-      !canViewRequest(
-        currentUser.role,
-        request.requesterId,
-        currentUser.id
-      )
-    ) {
-      return (
-        <Card>
-          <p className="text-red-500">
-            You do not have permission to view this request.
-          </p>
-        </Card>
-      );
-    }
+//  if (
+//       currentUser &&
+//       !canViewRequest(
+//         currentUser.role,
+//         request.requesterId,
+//         currentUser.id
+//       )
+//     ) {
+//       return (
+//         <Card>
+//           <p className="text-red-500">
+//             You do not have permission to view this request.
+//           </p>
+//         </Card>
+//       );
+//     }
 
   return (
     <Card>

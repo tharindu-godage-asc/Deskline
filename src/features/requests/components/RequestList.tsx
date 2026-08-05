@@ -54,6 +54,8 @@ export function RequestList({
   if (error) {
   return (
     <ErrorState
+      title="Unable to load requests"
+      description="Something went wrong while fetching your requests. Please try again."
       onRetry={() =>
         setError(false)
       }

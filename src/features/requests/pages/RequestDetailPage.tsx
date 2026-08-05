@@ -8,6 +8,8 @@ import { LoadingState } from "../components/states/LoadingState";
 import type { Message } from "../../../shared/types";
 import { mapMessage } from "../../../shared/mappers/messageMapper";
 import type { ApiMessage } from "../../../shared/types/api/ApiMessage";
+import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
+import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
 export function RequestDetailPage() {
   const { id } = useParams();
@@ -15,7 +17,7 @@ export function RequestDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [request, setRequest] = useState(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<ErrorInfo | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -49,9 +51,13 @@ export function RequestDetailPage() {
           );
         }
       })
-      .catch(() => {
+      .catch((error) => {
         if (!cancelled) {
-          setError(true);
+          setError(
+            mapStatusCodeToError(
+              (error as any)?.status
+            )
+          );
           setIsLoading(false);
         }
       });
@@ -68,6 +74,8 @@ export function RequestDetailPage() {
   if (error) {
     return (
       <ErrorState
+        title={error.title}
+        description={error.description}
         onRetry={() =>
           window.location.reload()
         }

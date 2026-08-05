@@ -10,6 +10,8 @@ import { useAuth } from "../../../shared/context/AuthContext";
 import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
+import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
+import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
 import {type RequestFilters, DEFAULT_REQUEST_FILTERS} from "../../../shared/types/filters";
 
@@ -55,7 +57,7 @@ export function QueuePage() {
 );
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<ErrorInfo | null>(null);
 
   useEffect(() => {
     async function loadRequests() {
@@ -65,7 +67,7 @@ export function QueuePage() {
         //   setTimeout(resolve, 2000)
         // ); --------------------------------->> For Testing Loader
 
-        setError(false);
+        setError(null);
 
         const data =
           await getRequests(
@@ -75,8 +77,12 @@ export function QueuePage() {
         // throw new Error();
 
         setRequests(data);
-      } catch {
-        setError(true);
+      } catch (error) {
+        setError(
+          mapStatusCodeToError(
+            (error as any)?.status
+          )
+        );
       } finally {
         setLoading(false);
       }
@@ -103,6 +109,8 @@ export function QueuePage() {
   if (error) {
     return (
       <ErrorState
+        title={error.title}
+        description={error.description}
         onRetry={() => {
           window.location.reload();
         }}
