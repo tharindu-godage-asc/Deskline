@@ -5,9 +5,9 @@ import { RequestDetail } from "../components/request detail/RequestDetail";
 import { getRequestById } from "../../../shared/api/requestApi";
 import { ErrorState } from "../components/states/ErrorState";
 import { LoadingState } from "../components/states/LoadingState";
-import type { Message } from "../../../shared/types";
-import { mapMessage } from "../../../shared/mappers/messageMapper";
-import type { ApiMessage } from "../../../shared/types/api/ApiMessage";
+import { useAuth } from "../../../shared/context/AuthContext";
+import type { Request } from "../../../shared/types/request";
+import type { Message } from "../../../shared/types/message";
 import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
 import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
@@ -15,12 +15,13 @@ export function RequestDetailPage() {
   const { id } = useParams();
  
   const [isLoading, setIsLoading] = useState(true);
-  const [request, setRequest] = useState(null);
+  const [request, setRequest] = useState<Request | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState<ErrorInfo | null>(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !currentUser) {
       setRequest(null);
       setIsLoading(false);
       return;
@@ -29,26 +30,12 @@ export function RequestDetailPage() {
     let cancelled = false;
     setIsLoading(true);
 
-    void getRequestById(id)
+    getRequestById(id, currentUser.id)
       .then((result) => {
         if (!cancelled) {
           setRequest(result.request);
-          setMessages(
-            result.messages.map(
-              (message: ApiMessage) =>
-                mapMessage(message)
-            )
-          );
+          setMessages(result.messages);
           setIsLoading(false);
-          console.log(
-            "Request API Response - Comments + Details:",
-            result
-          );
-
-          console.log(
-            "Comments:",
-            result.messages
-          );
         }
       })
       .catch((error) => {
@@ -65,7 +52,7 @@ export function RequestDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, currentUser]);
 
   if (isLoading) {
     return <LoadingState />;

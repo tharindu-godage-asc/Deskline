@@ -1,41 +1,28 @@
 import type { Status } from "../types";
+import type { ApiRequest } from "../types/api/ApiRequest";
+import type { ApiMessage } from "../types/api/ApiMessage";
+import type { Request } from "../types/request";
+import type { Message } from "../types/message";
+import { mapRequest } from "../mappers/requestMapper";
+import { mapMessage } from "../mappers/messageMapper";
 
-export async function getRequests(
-  userId: string
-) {
-  const response =
-    await fetch("/requests", {
-      headers: {
-        "x-user-id": userId,
-      },
-    });
+export async function getRequests(userId: string): Promise<Request[]> {
+  const response = await fetch("/requests", { headers: { "x-user-id": userId } });
+  if (!response.ok) throw { status: response.status, message: "Failed to load requests" };
 
-  if (!response.ok) {
-    throw {
-      status: response.status,
-      message: "Failed to load requests",
-    };
-  }
-
-  return response.json();
+  const apiRequests = await response.json() as ApiRequest[];
+  return apiRequests.map(mapRequest);
 }
 
-export async function getRequestById(
-  id: string
-) {
-  const response =
-    await fetch(
-      `/requests/${id}`
-    );
+export async function getRequestById(id: string, currentUserId: string): Promise<{ request: Request; messages: Message[] }> {
+  const response = await fetch(`/requests/${id}`, { headers: { "x-user-id": currentUserId } });
+  if (!response.ok) throw { status: response.status, message: "Failed to load request" };
 
-  if (!response.ok) {
-    throw {
-      status: response.status,
-      message: "Failed to load request",
-    };
-  }
-
-  return response.json();
+  const result = await response.json() as { request: ApiRequest; messages: ApiMessage[] };
+  return {
+    request: mapRequest(result.request),
+    messages: result.messages.map(mapMessage),
+  };
 }
 
 export async function createRequest(
