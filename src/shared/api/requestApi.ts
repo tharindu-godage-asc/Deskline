@@ -88,6 +88,7 @@ export async function addComment(
         headers: {
           "Content-Type":
             "application/json",
+          "x-user-id": data.authorId,
         },
         body: JSON.stringify(data),
       }

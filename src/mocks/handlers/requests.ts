@@ -162,10 +162,6 @@ http.post(
         "x-user-id"
       );
 
-      console.log(
-"POST /requests userId:",
-userId
-);
 
     const user = users.find(
       (u) => u.id === userId
@@ -250,6 +246,26 @@ http.post(
 
     if (!req) {
       return notFound();
+    }
+
+    const userId =
+      request.headers.get(
+        "x-user-id"
+      );
+
+    const user = users.find(
+      (u) => u.id === userId
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
     }
 
     if (
