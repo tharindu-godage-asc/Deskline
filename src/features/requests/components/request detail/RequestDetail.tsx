@@ -11,18 +11,18 @@
 
 import { Button } from "../../../../shared/ui/button/Button";
 import { Card } from "../../../../shared/ui/Card";
-
 import { useAuth } from "../../../../shared/context/AuthContext";
-import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../../shared/lib/permissions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../../shared/hooks/useMotion";
 import { useMemo } from "react";
-
 import { getUsers } from "../../../../shared/api/userApi";
 import { addComment } from "../../../../shared/api/requestApi";
-import { updateRequest } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
-import { ConfirmDialog } from "../../../../shared/ui/modal/ConfirmDialog";
+import { RequestActions } from "./RequestActions";
+import {
+  canViewRequest, canComment
+} from "../../../../shared/lib/permissions";
+``
 
 import RequestDetailHeader from "./RequestDetailHeader";
 import RequestComments from "./RequestComments";
@@ -68,7 +68,6 @@ export function RequestDetail({
   async function loadUsers() {
     try {
       const data = await getUsers();
-
       setUsers(data);
     } catch (error) {
       console.error(
@@ -171,9 +170,7 @@ export function RequestDetail({
           commentText={commentText}
           setCommentText={setCommentText}
           handleAddComment={handleAddComment}
-          isSubmittingComment={
-            isSubmittingComment
-          }
+          isSubmittingComment={isSubmittingComment}
           canComment={canComment(
             currentUser.role,
             request.requesterId,
@@ -183,446 +180,24 @@ export function RequestDetail({
           reduceMotion={reduceMotion}
         />
 
-        {/* Actions */}
-          <div className="border-t pt-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">
-                Actions
-              </h3>
+
 
 
 {/* /////-----------------------------Testing Purposes Only----------------------------\\\\\ */}
 
-        <div className="flex gap-2">
-          {/* <Button
-            variant="secondary"
-            onClick={async () => {
-              try {
-                const updatedRequest =
-                  await updateRequest(
-                    request.id,
-                    {
-                      status: "cancelled",
-                    },
-                    currentUser.id
-                  );
-
-                console.log(
-                  "Cancelled Request:",
-                  updatedRequest
-                );
-
-                showToast(
-                  "Request cancelled.",
-                  "success"
-                );
-              } catch (error) {
-                console.error(error);
-
-                showToast(
-                  "Failed to cancel request.",
-                  "error"
-                );
-              }
-            }}
-          >
-          CANCEL
-        </Button> */}
-
-          {/* <Button
-            onClick={async () => {
-              try {
-                await updateRequest(
-                  request.id,
-                  {
-                    assigneeId:
-                      selectedAssignee,
-                  },
-                  currentUser.id
-                );
-
-                showToast(
-                  "Request reassigned.",
-                  "success"
-                );
-              } catch {
-                showToast(
-                  "Failed to reassign request.",
-                  "error"
-                );
-              }
-            }}
-          >
-            Reassign
-          </Button> */}
-
-            {/* <Button
-              variant="secondary"
-              onClick={async () => {
-                try {
-                  await updateRequest(
-                    request.id,
-                    {
-                      status: "pending",
-                    },
-                    currentUser.id
-                  );
-
-                  showToast(
-                    "Request moved to pending.",
-                    "success"
-                  );
-                } catch {
-                  showToast(
-                    "Failed to update request.",
-                    "error"
-                  );
-                }
-              }}
-            >
-              Set Pending
-            </Button> */}
-
-            {/* <Button
-              variant="secondary"
-              onClick={async () => {
-                try {
-                  await updateRequest(
-                    request.id,
-                    {
-                      status: "open",
-                    },
-                    currentUser.id
-                  );
-
-                  showToast(
-                    "Request updated.",
-                    "success"
-                  );
-                } catch {
-                  showToast(
-                    "Failed to update request.",
-                    "error"
-                  );
-                }
-              }}
-            >
-              Set Open
-            </Button> */}
-
-          {/* <Button
-            variant="secondary"
-            onClick={async () => {
-              try {
-                const updatedRequest =
-                  await updateRequest(
-                    request.id,
-                    {
-                      status: "closed",
-                    },
-                    currentUser.id
-                  );
-
-                console.log(
-                  "Updated Request:",
-                  updatedRequest
-                );
-
-                showToast(
-                  "Request closed.",
-                  "success"
-                );
-              } catch (error) {
-                console.error(error);
-
-                showToast(
-                  "Failed to close request.",
-                  "error"
-                );
-              }
-            }}
-          >
-            TEST CLOSE
-          </Button> */}
-
-          {/* <Button
-            variant="secondary"
-            onClick={async () => {
-              try {
-                await updateRequest(
-                  request.id,
-                  {
-                    assigneeId: currentUser.id,
-                  },
-                  currentUser.id
-                );
-
-                showToast(
-                  "Request assigned.",
-                  "success"
-                );
-              } catch {
-                showToast(
-                  "Failed to assign request.",
-                  "error"
-                );
-              }
-            }}
-          >
-            Assign To Me
-          </Button> */}
-        </div>
-
 {/* /////--------------------------------------------------------------------------------\\\\\ */}
 
-
-              <div className="flex gap-2">
-
-            {/* CancelRequest */}
-                {currentUser &&
-                  canCancelRequest(
-                    currentUser.role,
-                    request.requesterId,
-                    currentUser.id,
-                    request.status
-                  ) && (
-                    <Button
-                      variant="danger"
-                      onClick={() =>
-                        setConfirmAction("cancel")
-                      }
-                    >
-                      Cancel Request
-                    </Button>
-                  )}
-
-            {/* AssignToMe */}
-                  {currentUser &&
-                    canAssignToMe(
-                      currentUser.role
-                    ) &&
-                    request.assigneeId !==
-                      currentUser.id && (
-                      <Button 
-                        variant="secondary"
-                        onClick={async () => {
-                          try {
-                            await updateRequest(
-                              request.id,
-                              {
-                                assigneeId:
-                                  currentUser.id,
-                              },
-                              currentUser.id
-                            );
-
-                            showToast(
-                              "Assigned to you.",
-                              "success"
-                            );
-                          } catch {
-                            showToast(
-                              "Failed to assign request.",
-                              "error"
-                            );
-                          }
-                        }}>
-                        Assign To Me
-                      </Button>
-                    )}
-
-            {/* SetPending */}
-                    {currentUser &&
-                    canSetPending(
-                      currentUser.role
-                    ) &&
-                    request.status === "open" && (
-                                  <Button
-                                    variant="secondary"
-                                    onClick={async () => {
-                                      try {
-                                        await updateRequest(
-                                          request.id,
-                                          {
-                                            status: "pending",
-                                          },
-                                          currentUser.id
-                                        );
-
-                                        showToast(
-                                          "Request moved to pending.",
-                                          "success"
-                                        );
-                                      } catch {
-                                        showToast(
-                                          "Failed to update request.",
-                                          "error"
-                                        );
-                                      }
-                                    }}
-                                  >
-                                    Set Pending
-                                  </Button>
-                    )}
-                    
-
-            {/* CloseRequest */}
-                    {currentUser &&
-                      canCloseRequest(
-                        currentUser.role,
-                        request.status
-                      ) && (
-                        <Button
-                          variant="danger"
-                          onClick={() =>
-                            setConfirmAction("close")
-                          }
-                        >
-                          Close Request
-                        </Button>
-                      )}
-
-                    {currentUser &&
-                      canReassign(
-                          currentUser.role
-                        ) && (
-                          <div className="flex items-center gap-2">
-                            <select
-                              value={selectedAssignee}
-                              onChange={(e) =>
-                                setSelectedAssignee(
-                                  e.target.value
-                                )
-                              }
-                              className="rounded-md border px-3 py-2"
-                            >
-                              <option value="">
-                                Select Assignee
-                              </option>
-
-                              {users
-                                .filter(
-                                  (user) =>
-                                    user.role === "technician" ||
-                                    user.role === "admin"
-                                )
-                                .filter(
-                                  (user) =>
-                                    user.id !== request.assigneeId
-                                )
-                                .map((user) => (
-                                  <option
-                                    key={user.id}
-                                    value={user.id}
-                                  >
-                                    {user.name}
-                                  </option>
-                                ))}
-                            </select>
-
-                            <Button
-                              disabled={
-                                !selectedAssignee ||
-                                isReassigning
-                              }
-                              onClick={async () => {
-                                try {
-                                  setIsReassigning(true);
-
-                                  await updateRequest(
-                                    request.id,
-                                    {
-                                      assigneeId:
-                                        selectedAssignee,
-                                    },
-                                    currentUser.id
-                                  );
-
-                                  showToast(
-                                    "Request reassigned.",
-                                    "success"
-                                  );
-                                } catch {
-                                  showToast(
-                                    "Failed to reassign request.",
-                                    "error"
-                                  );
-                                } finally {
-                                  setIsReassigning(false);
-                                }
-                              }}
-                            >
-                              {isReassigning
-                                ? "Reassigning..."
-                                : "Reassign"}
-                            </Button>
-                          </div>
-                        )}
-              </div>
-            </div>
-          </div>
-
-
-
-
-        <ConfirmDialog
-          isOpen={confirmAction !== null}
-          title={
-            confirmAction === "cancel"
-              ? "Cancel Request"
-              : "Close Request"
-          }
-          message={
-            confirmAction === "cancel"
-              ? "Are you sure you want to cancel this request?"
-              : "Are you sure you want to close this request?"
-          }
-          onConfirm={async () => {
-            try {
-             if (
-                    confirmAction === "cancel"
-                  ) {
-                    await updateRequest(
-                      request.id,
-                      {
-                        status: "cancelled",
-                      },
-                      currentUser.id
-                    );
-
-                    showToast(
-                      "Request cancelled.",
-                      "success"
-                    );
-                  }
-
-                  if (
-                    confirmAction === "close"
-                  ) {
-                    await updateRequest(
-                      request.id,
-                      {
-                        status: "closed",
-                      },
-                      currentUser.id
-                    );
-
-                    showToast(
-                      "Request closed.",
-                      "success"
-                    );
-                  }
-            } catch (error) {
-              alert(
-                (error as Error).message
-              );
-            }
-
-            setConfirmAction(null);
-          }}
-          onCancel={() =>
-            setConfirmAction(null)
-          }
+        {/* Actions */}
+        <RequestActions
+          request={request}
+          currentUser={currentUser}
+          users={users}
+          selectedAssignee={selectedAssignee}
+          setSelectedAssignee={setSelectedAssignee}
+          isReassigning={isReassigning}
+          setIsReassigning={setIsReassigning}
+          confirmAction={confirmAction}
+          setConfirmAction={setConfirmAction}
         />
 
         {/* Timeline */}
