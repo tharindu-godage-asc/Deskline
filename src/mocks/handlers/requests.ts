@@ -114,73 +114,32 @@ export const requestHandlers = [
 ),
 
 //  GET Request by ID
-http.get(
+  http.get(
   "/requests/:id",
-  ({ params, request }) => {
+  ({ params }) => {
     const requestId =
       params.id as string;
 
-    const targetRequest =
+    const request =
       requests.find(
-        (r) => r.id === requestId
+        (r) =>
+          r.id === requestId
       );
 
-    if (!targetRequest) {
-      return HttpResponse.json(
-        {
-          message:
-            "Request not found",
-        },
-        {
-          status: 404,
-        }
-      );
+    if (!request) {
+      return notFound()
     }
 
-    const userId =
-      request.headers.get(
-        "x-user-id"
+    const messages =
+      UserComments.filter(
+        (comment) =>
+          comment.requestId ===
+          requestId
       );
-
-    const user = users.find(
-      (u) => u.id === userId
-    );
-
-    if (!user) {
-      return HttpResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        {
-          status: 401,
-        }
-      );
-    }
-
-    // Requesters may only view own requests
-    if (
-      user.role === "requester" &&
-      targetRequest.requesterId !==
-        user.id
-    ) {
-      return HttpResponse.json(
-        {
-          message: "Forbidden",
-        },
-        {
-          status: 403,
-        }
-      );
-    }
 
     return HttpResponse.json({
-      request: targetRequest,
-      messages:
-        UserComments.filter(
-          (message) =>
-            message.requestId ===
-            requestId
-        ),
+      request,
+      messages,
     });
   }
 ),
@@ -194,7 +153,7 @@ http.post(
       category: Category;
       priority: Priority;
       requesterId: string;
-      author: string;
+      authorId: string;
       description: string;
     };
 
@@ -218,7 +177,7 @@ http.post(
       id: crypto.randomUUID(),
       requestId:
         newRequest.id,
-      authorId: body.author,
+      authorId: body.authorId,
       body:
         body.description,
       createdAt:
@@ -278,11 +237,7 @@ http.post(
           }
         | null;
 
-    if (
-      !body ||
-      !body.authorId ||
-      !body.body
-    ) {
+    if (!body || !body.authorId || !body.body) {
       return badRequest();
     }
 
@@ -293,7 +248,6 @@ http.post(
       body: body.body,
       createdAt: new Date().toLocaleString(),
     };
-
 
     UserComments.push(
       newComment

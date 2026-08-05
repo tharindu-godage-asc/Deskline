@@ -45,7 +45,7 @@ export async function createRequest(
     priority: string;
     description: string;
     requesterId: string;
-    author: string;
+    authorId: string;
   }
 ) {
   const response =
