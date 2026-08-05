@@ -46,7 +46,8 @@ export async function createRequest(
     description: string;
     requesterId: string;
     authorId: string;
-  }
+  },
+  currentUserId: string
 ) {
   const response =
     await fetch(
@@ -54,8 +55,8 @@ export async function createRequest(
       {
         method: "POST",
         headers: {
-          "Content-Type":
-            "application/json",
+          "Content-Type": "application/json",
+          "x-user-id": currentUserId,
         },
         body: JSON.stringify(
           data

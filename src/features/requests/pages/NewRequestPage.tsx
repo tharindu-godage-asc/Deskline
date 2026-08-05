@@ -67,7 +67,7 @@ const handleSubmit = async (
                 currentUser.id,
               authorId:
                 currentUser.id,
-            });
+            }, currentUser.id);
             showToast(
               "Request created successfully.",
               "success"

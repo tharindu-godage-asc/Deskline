@@ -157,6 +157,44 @@ http.post(
       description: string;
     };
 
+    const userId =
+      request.headers.get(
+        "x-user-id"
+      );
+
+      console.log(
+"POST /requests userId:",
+userId
+);
+
+    const user = users.find(
+      (u) => u.id === userId
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    if (
+      user.role !== "requester"
+    ) {
+      return HttpResponse.json(
+        {
+          message: "Forbidden",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
     const newRequest: Request = {
       id: crypto.randomUUID(),
       title: body.title,
