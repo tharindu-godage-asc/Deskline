@@ -165,27 +165,27 @@ export const UserComments = [
   {
     id: "c1",
     requestId: "r1",
-    author: "John Doe",
-    message:
+    authorId: "user-4",
+    body:
       "My laptop screen started flickering this morning.",
     createdAt: "2025-07-22 09:15",
   },
   {
     id: "c2",
     requestId: "r1",
-    author: "John Wayne",
-    message:
+    authorId: "user-3", 
+    body:
       "I've assigned this issue to myself and will investigate.",
     createdAt: "2025-07-22 10:30",
   },
   {
     id: "c3",
     requestId: "r2",
-    author: "Jane Smith",
-    message:
+    authorId: "user-2", 
+    body:
       "I'm also experiencing this VPN issue.",
     createdAt: "2025-07-22 11:45",
-  },
+  }
 ];
 
 export const requests = [

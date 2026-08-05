@@ -5,13 +5,16 @@ import { RequestDetail } from "../components/request detail/RequestDetail";
 import { getRequestById } from "../../../shared/api/requestApi";
 import { ErrorState } from "../components/states/ErrorState";
 import { LoadingState } from "../components/states/LoadingState";
+import type { Message } from "../../../shared/types";
+import { mapMessage } from "../../../shared/mappers/messageMapper";
+import type { ApiMessage } from "../../../shared/types/api/ApiMessage";
 
 export function RequestDetailPage() {
   const { id } = useParams();
  
   const [isLoading, setIsLoading] = useState(true);
   const [request, setRequest] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -28,7 +31,12 @@ export function RequestDetailPage() {
       .then((result) => {
         if (!cancelled) {
           setRequest(result.request);
-          setMessages(result.messages);
+          setMessages(
+            result.messages.map(
+              (message: ApiMessage) =>
+                mapMessage(message)
+            )
+          );
           setIsLoading(false);
           console.log(
             "Request API Response - Comments + Details:",

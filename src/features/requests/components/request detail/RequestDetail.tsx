@@ -9,13 +9,11 @@
  * selected request and support additional interactions.
  */
 
-import { Badge } from "../../../../shared/ui/badge/Badge";
 import { Button } from "../../../../shared/ui/button/Button";
 import { Card } from "../../../../shared/ui/Card";
 
 import { useAuth } from "../../../../shared/context/AuthContext";
 import { canCancelRequest, canAssignToMe, canSetPending, canCloseRequest, canReassign, canComment, canViewRequest } from "../../../../shared/lib/permissions";
-import { setPending } from "../../api/requestActions";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../../shared/hooks/useMotion";
 import { useMemo } from "react";
@@ -27,6 +25,7 @@ import { useToast } from "../../../../shared/context/ToastContext";
 import { ConfirmDialog } from "../../../../shared/ui/modal/ConfirmDialog";
 
 import RequestDetailHeader from "./RequestDetailHeader";
+import RequestComments from "./RequestComments";
 
 interface Props {
   request: any;
@@ -96,13 +95,17 @@ export function RequestDetail({
     }
 
     setIsSubmittingComment(true);
+    console.log("Submitting comment", {
+  authorId: currentUser.id,
+  body: commentText,
+});
 
     try {
       const newComment = await addComment(
         request.id,
         {
-          author: currentUser.name,
-          message: commentText,
+          authorId: currentUser.id,
+          body: commentText,
         }
       );
 
@@ -161,44 +164,24 @@ export function RequestDetail({
           }
         />
 
-        {/* Request Information */}
-        {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border p-4">
-            <p className="text-sm">
-              Priority
-            </p>
-            <p className="mt-1 font-medium capitalize">
-              {request.priority}
-            </p>
-          </div>
-
-          <div className="rounded-lg border p-4">
-            <p className="text-sm ">
-              Category
-            </p>
-            <p className="mt-1 font-medium capitalize">
-              {request.category}
-            </p>
-          </div>
-
-          <div className="rounded-lg border p-4">
-            <p className="text-sm">
-              Requester
-            </p>
-            <p className="mt-1 font-medium">
-              {requester?.name ?? "Unknown User"}
-            </p>
-          </div>
-
-          <div className="rounded-lg border p-4">
-            <p className="text-sm">
-              Assignee
-            </p>
-            <p className="mt-1 font-medium">
-              {assignee?.name ?? "Unassigned"}
-            </p>
-          </div>
-        </div> */}
+      {/*Comments Section */}
+        <RequestComments
+          comments={comments}
+          users={users}
+          commentText={commentText}
+          setCommentText={setCommentText}
+          handleAddComment={handleAddComment}
+          isSubmittingComment={
+            isSubmittingComment
+          }
+          canComment={canComment(
+            currentUser.role,
+            request.requesterId,
+            currentUser.id,
+            request.status
+          )}
+          reduceMotion={reduceMotion}
+        />
 
         {/* Actions */}
           <div className="border-t pt-4">
@@ -580,99 +563,7 @@ export function RequestDetail({
           </div>
 
 
-          {/*Comments Section */}
-      <div className="border-t pt-4">
-        <h3 className="mb-3 font-semibold">
-          Comments
-        </h3>
-          
-          {comments.length === 0 ? (
-            <p className="text-sm opacity-70">
-              No comments yet.
-            </p>
-          ) : (
-                    <div className="space-y-3">
-          {comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="rounded-lg border p-3"
-            >
-              <div className="flex items-center justify-between">
-                <p className="font-medium">
-                  {comment.author}
-                </p>
 
-                <p className="text-xs opacity-70">
-                  {comment.createdAt}
-                </p>
-              </div>
-
-              <p className="mt-2 text-sm">
-                {comment.message}
-              </p>
-            </div>
-          ))}
-        </div>
-          )}
-  
-
-        {/* Message Thread */}
-      <div className="border-t pt-4">
-        <h3 className="mb-3 font-semibold">
-          Activity
-        </h3>
-
-
-      </div>
-
-          {currentUser &&
-            canComment(
-              currentUser.role,
-              request.requesterId,
-              currentUser.id,
-              request.status
-            ) ? (
-              <div className="space-y-3">
-                <textarea
-                  className="w-full rounded-md border p-3"
-                  rows={4}
-                  placeholder="Add a comment..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                />
-
-                <Button
-                  onClick={handleAddComment}
-                  disabled={
-                    isSubmittingComment ||
-                    !commentText.trim()
-                  }
-                >
-                 {isSubmittingComment ? (
-                    <span className="flex items-center gap-2">
-                      <span
-                        className={
-                          reduceMotion
-                            ? ""
-                            : "h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"
-                        }
-                      />
-
-                      Submitting...
-                    </span>
-                  ) : (
-                    "Add Comment"
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <p className="text-sm opacity-70">
-                Comments are disabled because this request
-                is closed or you do not have permission to
-                comment on it.
-              </p>
-            )}
-        </div>
 
         <ConfirmDialog
           isOpen={confirmAction !== null}
@@ -735,7 +626,7 @@ export function RequestDetail({
         />
 
         {/* Timeline */}
-        <div className="border-t pt-4">
+        <div className=" pt-12">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm">

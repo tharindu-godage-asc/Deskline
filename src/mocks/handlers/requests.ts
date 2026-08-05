@@ -177,8 +177,8 @@ http.post(
       id: crypto.randomUUID(),
       requestId:
         newRequest.id,
-      author: body.author,
-      message:
+      authorId: body.author,
+      body:
         body.description,
       createdAt:
         new Date().toLocaleString(),
@@ -232,23 +232,27 @@ http.post(
     const body =
       (await request.json()) as
         | {
-            author: string;
-            message: string;
+            authorId: string;
+            body: string;
           }
         | null;
 
-    if (!body || !body.author || !body.message) {
+    if (
+      !body ||
+      !body.authorId ||
+      !body.body
+    ) {
       return badRequest();
     }
 
     const newComment = {
       id: crypto.randomUUID(),
       requestId,
-      author: body.author,
-      message: body.message,
-      createdAt:
-        new Date().toLocaleString(),
+      authorId: body.authorId,
+      body: body.body,
+      createdAt: new Date().toLocaleString(),
     };
+
 
     UserComments.push(
       newComment

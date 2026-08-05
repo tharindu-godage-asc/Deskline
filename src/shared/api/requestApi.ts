@@ -73,8 +73,8 @@ export async function createRequest(
 export async function addComment(
   requestId: string,
   data: {
-    author: string;
-    message: string;
+    authorId: string;
+    body: string;
   }
 ) {
   const response =
