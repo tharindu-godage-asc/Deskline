@@ -58,7 +58,7 @@ export function RequestActions({
     <>
       {/* Actions */}
 
-      <div className="border-t pt-4">
+      <div className="border-t border-gray-200 pt-4">
         <div className="flex items-center justify-between">
                       <h3 className="font-semibold">
                         Actions

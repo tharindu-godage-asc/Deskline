@@ -19,10 +19,7 @@ import { getUsers } from "../../../../shared/api/userApi";
 import { addComment } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
 import { RequestActions } from "./RequestActions";
-import {
-  canViewRequest, canComment
-} from "../../../../shared/lib/permissions";
-``
+import { canViewRequest, canComment } from "../../../../shared/lib/permissions";
 
 import RequestDetailHeader from "./RequestDetailHeader";
 import RequestComments from "./RequestComments";
@@ -48,7 +45,6 @@ export function RequestDetail({
     [users, request.requesterId]
   );
   const { showToast } = useToast();
-
   const assignee = useMemo(
     () =>
       users.find(

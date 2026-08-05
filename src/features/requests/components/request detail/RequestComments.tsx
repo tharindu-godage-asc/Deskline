@@ -63,7 +63,7 @@ export default function RequestComments({
             return (
               <div
                 key={comment.id}
-                className="rounded-lg border p-3"
+                className="rounded-lg border border-gray-200 p-3"
               >
                 <div className="flex items-center justify-between">
                   <p className="font-medium">
@@ -86,7 +86,7 @@ export default function RequestComments({
         </div>
       )}
 
-      <div className="mt-6 border-t pt-4">
+      <div className="mt-6 pt-4">
         {canComment ? (
           <div className="space-y-3">
             <textarea
