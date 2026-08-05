@@ -15,31 +15,42 @@ export default function RequestDetailHeader({
   assigneeName,
 }: Props) {
     return (
-       <div className="flex items-center gap-4 flex-wrap">
-            <h2 className="text-2xl font-bold whitespace-nowrap">
-                {request.title}
-            </h2>
-
-            <Badge variant={request.status}>{request.status}</Badge>
-            <Badge variant={request.priority}>{request.priority}</Badge>
-            <Badge
-                variant="general"
-                className="flex items-center gap-1.5"
-                >
-                {categoryIcons[request.category]}
-                <span className="capitalize">
-                    {request.category}
-                </span>
+    <div className="space-y-3">
+        {/* Top Row */}
+        <div className="flex items-center gap-4 flex-wrap">
+            <Badge variant={request.status}>
+            Status: {request.status}
             </Badge>
 
-            <div className="flex-grow flex-end"></div>
-            <span className="flex-end text-sm whitespace-nowrap">
-                <strong>Requester:</strong> {requesterName}
-            </span>
+            <Badge variant={request.priority}>
+            Priority: {request.priority}
+            </Badge>
+
+            <Badge
+            variant="general"
+            className="flex items-center gap-1.5"
+            >
+            {categoryIcons[request.category]}
+            <span className="capitalize">{request.category}</span>
+            </Badge>
+
+            <div className="ml-auto" />
 
             <span className="text-sm whitespace-nowrap">
-                <strong>Assignee:</strong> {assigneeName || "Unassigned"}
+            <strong>Requester:</strong> {requesterName}
             </span>
         </div>
+
+        {/* Bottom Row */}
+        <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-bold">
+            {request.title}
+            </h2>
+
+            <span className="ml-auto text-sm whitespace-nowrap text-left">
+            <strong>Assignee:</strong> {assigneeName || "Unassigned"}
+            </span>
+        </div>
+    </div>
     );
 }

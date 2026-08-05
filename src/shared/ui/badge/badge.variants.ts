@@ -17,7 +17,7 @@ export const badgeVariants = cva(
         high: "bg-red-100 text-red-800 border-red-200",
 
         general:
-        "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800",
+        "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
       },
       size: {
         sm: "text-xs",
