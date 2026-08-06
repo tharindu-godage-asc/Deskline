@@ -5,6 +5,7 @@ import { requestSchema } from "../schemas/requestSchema";
 import { getCurrentUser } from "../../../shared/api/auth";
 import {createRequest} from "../../../shared/api/requestApi";
 import { useToast } from "../../../shared/context/ToastContext";
+import { Input } from "../../../shared/ui/Input";
 
 
 export function NewRequestPage() {
@@ -112,7 +113,7 @@ const handleSubmit = async (
               Title
             </label>
 
-            <input
+            <Input
               id="title"
               type="text"
               value={title}
@@ -153,7 +154,7 @@ const handleSubmit = async (
                     category: "",
                   }));
                 }}
-                className="w-full rounded-md border px-3 py-2"
+                className="w-full rounded-md border border-gray-200 px-3 py-2"
               >
               <option value="">
                 Select a category
@@ -201,7 +202,7 @@ const handleSubmit = async (
                   priority: "",
                 }));
               }}
-              className="w-full rounded-md border px-3 py-2"
+              className="w-full rounded-md border border-gray-200 px-3 py-2"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -234,7 +235,7 @@ const handleSubmit = async (
                 }));
               }}
               placeholder="Provide details about the issue..."
-              className="w-full rounded-md border px-3 py-2"
+              className="w-full rounded-md border border-gray-200 px-3 py-2"
             />
             {errors.description && (
               <p className="mt-1 text-sm text-red-500">

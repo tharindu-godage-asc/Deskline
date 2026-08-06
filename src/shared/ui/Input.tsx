@@ -11,7 +11,7 @@ export function Input({
   return (
     <input
       {...props}
-      className="w-full rounded-md border px-3 py-2 outline-none"
+      className="w-full rounded-md border border-gray-200 px-3 py-2"
       style={{
         background:
           "var(--color-surface)",
