@@ -39,6 +39,10 @@ type Props = {
       | "close"
       | null
   ) => void;
+
+  onRequestUpdated: (
+    request: Request
+  ) => void;
 };
 
 export function RequestActions({
@@ -51,6 +55,7 @@ export function RequestActions({
   setIsReassigning,
   confirmAction,
   setConfirmAction,
+  onRequestUpdated,
 }: Props) {
   const { showToast } =
     useToast();
@@ -94,7 +99,7 @@ export function RequestActions({
                                 variant="secondary"
                                 onClick={async () => {
                                   try {
-                                    await updateRequest(
+                                    const updatedRequest = await updateRequest(
                                       request.id,
                                       {
                                         assigneeId:
@@ -102,7 +107,8 @@ export function RequestActions({
                                       },
                                       currentUser.id
                                     );
-        
+
+                                    onRequestUpdated(updatedRequest);
                                     showToast(
                                       "Assigned to you.",
                                       "success"
@@ -128,7 +134,7 @@ export function RequestActions({
                                             variant="secondary"
                                             onClick={async () => {
                                               try {
-                                                await updateRequest(
+                                                const updatedRequest = await updateRequest(
                                                   request.id,
                                                   {
                                                     status: "pending",
@@ -136,6 +142,7 @@ export function RequestActions({
                                                   currentUser.id
                                                 );
 
+                                                onRequestUpdated(updatedRequest);
                                                 showToast(
                                                   "Request moved to pending.",
                                                   "success"
@@ -161,7 +168,7 @@ export function RequestActions({
                                             variant="secondary"
                                             onClick={async () => {
                                               try {
-                                                await updateRequest(
+                                                const updatedRequest = await updateRequest(
                                                   request.id,
                                                   {
                                                     status: "open",
@@ -169,6 +176,7 @@ export function RequestActions({
                                                   currentUser.id
                                                 );
 
+                                                onRequestUpdated(updatedRequest);
                                                 showToast(
                                                   "Request reopened.",
                                                   "success"
@@ -248,8 +256,8 @@ export function RequestActions({
                                       onClick={async () => {
                                         try {
                                           setIsReassigning(true);
-        
-                                          await updateRequest(
+
+                                          const updatedRequest = await updateRequest(
                                             request.id,
                                             {
                                               assigneeId:
@@ -257,7 +265,8 @@ export function RequestActions({
                                             },
                                             currentUser.id
                                           );
-        
+
+                                          onRequestUpdated(updatedRequest);
                                           showToast(
                                             "Request reassigned.",
                                             "success"
@@ -304,31 +313,33 @@ export function RequestActions({
                    if (
                           confirmAction === "cancel"
                         ) {
-                          await updateRequest(
+                          const updatedRequest = await updateRequest(
                             request.id,
                             {
                               status: "cancelled",
                             },
                             currentUser.id
                           );
-      
+
+                          onRequestUpdated(updatedRequest);
                           showToast(
                             "Request cancelled.",
                             "success"
                           );
                         }
-      
+
                         if (
                           confirmAction === "close"
                         ) {
-                          await updateRequest(
+                          const updatedRequest = await updateRequest(
                             request.id,
                             {
                               status: "closed",
                             },
                             currentUser.id
                           );
-      
+
+                          onRequestUpdated(updatedRequest);
                           showToast(
                             "Request closed.",
                             "success"
