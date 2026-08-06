@@ -11,7 +11,6 @@ import { type ReactNode } from "react";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { Button } from "../../shared/ui/button/Button";
 import { router } from "../router";
-import { getCurrentUser } from "../../shared/api/auth";
 import { useMotion } from "../../shared/hooks/useMotion";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useToast } from "../../shared/context/ToastContext";
@@ -27,7 +26,6 @@ export function AppShell({ children }: Props) {
   toggleMotion,
 } = useMotion();
 
-console.log("This is getCurrentUser",getCurrentUser());
 
 const { currentUser, logout } = useAuth();
 const { showToast } = useToast();
@@ -36,8 +34,6 @@ const handleLogout = () => {
   router.navigate("/login");
   showToast("Logged out successfully.", "success");
 };
-
-console.log("This is CurrentUser",getCurrentUser());
 
   return (
     <div className="min-h-screen">

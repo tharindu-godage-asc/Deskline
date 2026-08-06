@@ -10,6 +10,7 @@ import { useAuth } from "../../../shared/context/AuthContext";
 import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
+import { EmptyState } from "../components/states/EmptyState";
 import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
 import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
@@ -120,13 +121,25 @@ export function QueuePage() {
 
   return (
     <>
-    
       <RequestFiltersComponent
         filters={filters}
         onChange={setFilters}
         showAssignee
       />
-      <RequestList requests={filteredRequests} />
+
+      {requests.length > 0 && filteredRequests.length === 0 ? (
+        <EmptyState
+          title="No matching requests found"
+          message="Try changing your search or filters to see matching requests."
+        />
+      ) : requests.length === 0 ? (
+        <EmptyState
+          title="No requests"
+          message="There are no requests."
+        />
+      ) : (
+        <RequestList requests={filteredRequests} />
+      )}
     </>
   );
 }

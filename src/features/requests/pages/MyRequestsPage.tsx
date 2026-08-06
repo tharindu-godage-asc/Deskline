@@ -10,6 +10,7 @@ import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { DEFAULT_REQUEST_FILTERS } from "../../../shared/types/filters";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
+import { EmptyState } from "../components/states/EmptyState";
 import { useSearchParams } from "react-router-dom";
 import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
 import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
@@ -131,14 +132,27 @@ if (error) {
     />
   );
 }
-  return (
-    <>
-      <RequestFiltersComponent
-        filters={filters}
-        onChange={setFilters}
-      />
 
+return (
+  <>
+    <RequestFiltersComponent
+      filters={filters}
+      onChange={setFilters}
+    />
+
+    {requests.length > 0 && filteredRequests.length === 0 ? (
+      <EmptyState
+        title="No matching requests found"
+        message="Try changing your search or filters to see matching requests."
+      />
+    ) : requests.length === 0 ? (
+      <EmptyState
+        title="No requests"
+        message="There are no requests."
+      />
+    ) : (
       <RequestList requests={filteredRequests} />
-    </>
-  );
+    )}
+  </>
+);
 }
