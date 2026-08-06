@@ -6,10 +6,10 @@ import { getCurrentUser } from "../../../shared/api/auth";
 import {createRequest} from "../../../shared/api/requestApi";
 import { useToast } from "../../../shared/context/ToastContext";
 import { Input } from "../../../shared/ui/Input";
-
+import { Select } from "../../../shared/ui/Select";
 
 export function NewRequestPage() {
-const currentUser = getCurrentUser();
+  const currentUser = getCurrentUser();
 const [title, setTitle] = useState("");
 const [description, setDescription] = useState("");
 const [category, setCategory] = useState("");
@@ -144,18 +144,17 @@ const handleSubmit = async (
               Category
             </label>
 
-            <select
-                id="category"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setErrors((prev) => ({
-                    ...prev,
-                    category: "",
-                  }));
-                }}
-                className="w-full rounded-md border border-gray-200 px-3 py-2"
-              >
+            <Select
+              id="category"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setErrors((prev) => ({
+                  ...prev,
+                  category: "",
+                }));
+              }}
+            >
               <option value="">
                 Select a category
               </option>
@@ -175,7 +174,7 @@ const handleSubmit = async (
               <option value="access">
                 Access
               </option>
-            </select>
+            </Select>
 
             {errors.category && (
               <p className="mt-1 text-sm text-red-500">
@@ -192,7 +191,7 @@ const handleSubmit = async (
               Priority
             </label>
 
-            <select
+            <Select
               id="priority"
               value={priority}
               onChange={(e) => {
@@ -202,12 +201,11 @@ const handleSubmit = async (
                   priority: "",
                 }));
               }}
-              className="w-full rounded-md border border-gray-200 px-3 py-2"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
-            </select>
+            </Select>
             {errors.priority && (
                 <p className="mt-1 text-sm text-red-500">
                   {errors.priority}
