@@ -4,6 +4,7 @@ import { useLogin } from "../../../shared/hooks/useLogin";
 import { useState } from "react";
 import { loginSchema } from "../../requests/schemas/loginSchema";
 import { useToast } from "../../../shared/context/ToastContext";
+import { Input } from "../../../shared/ui/Input";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -79,7 +80,7 @@ export function LoginPage() {
                 <label htmlFor="email" className="mb-1 block text-sm font-medium">
                   Email
                 </label>
-                <input
+                <Input
                   id="email"
                   type="email"
                   value={email}
@@ -97,7 +98,7 @@ export function LoginPage() {
                 <label htmlFor="password" className="mb-1 block text-sm font-medium">
                   Password
                 </label>
-                <input
+                <Input
                   id="password"
                   type="password"
                   value={password}
@@ -123,7 +124,7 @@ export function LoginPage() {
             </form>
           </div>
 
-          <div className="w-full rounded-lg border p-4 text-sm md:w-72 md:shrink-0">
+          <div className="w-full rounded-lg border border-gray-200 p-4 text-sm md:w-72 md:shrink-0">
             <p className="mb-4 text-base font-semibold">Demo Accounts</p>
             <div className="space-y-4">
               <div>

@@ -67,8 +67,18 @@ export function canCloseRequest(
 ) {
   return (
     role === "admin" &&
-    (status === "open" ||
-      status === "pending")
+    (status === "open" || status === "pending")
+  );
+}
+
+export function canReopenRequest(
+  role: UserRole,
+  status: Status
+) {
+  return (
+    (role === "technician" ||
+      role === "admin") &&
+    status === "pending"
   );
 }
 

@@ -24,15 +24,19 @@ import { canViewRequest, canComment } from "../../../../shared/lib/permissions";
 import RequestDetailHeader from "./RequestDetailHeader";
 import RequestComments from "./RequestComments";
 
+import type { Message } from "../../../../shared/types/message";
+import type { Request } from "../../../../shared/types/request";
+
 interface Props {
-  request: any;
-  messages: any[];
+  request: Request;
+  messages: Message[];
 }
 
 export function RequestDetail({
   request,
   messages,
 }: Props) {
+  const [requestState, setRequestState] = useState<Request>(request);
   const [selectedAssignee, setSelectedAssignee] = useState("");
   const { currentUser } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
@@ -40,18 +44,18 @@ export function RequestDetail({
     () =>
       users.find(
         (user) =>
-          user.id === request.requesterId
+          user.id === requestState.requesterId
       ),
-    [users, request.requesterId]
+    [users, requestState.requesterId]
   );
   const { showToast } = useToast();
   const assignee = useMemo(
     () =>
       users.find(
         (user) =>
-          user.id === request.assigneeId
+          user.id === requestState.assigneeId
       ),
-    [users, request.assigneeId]
+    [users, requestState.assigneeId]
   );
   const [confirmAction, setConfirmAction] =useState<"cancel" | "close" | null>(null);
   const [comments, setComments] = useState(messages);
@@ -80,6 +84,10 @@ export function RequestDetail({
     setComments(messages);
   }, [messages]);
 
+  useEffect(() => {
+    setRequestState(request);
+  }, [request]);
+
   const handleAddComment = async () => {
     if (
       !commentText.trim() ||
@@ -97,7 +105,7 @@ export function RequestDetail({
 
     try {
       const newComment = await addComment(
-        request.id,
+        requestState.id,
         {
           authorId: currentUser.id,
           body: commentText,
@@ -148,7 +156,7 @@ export function RequestDetail({
 
         {/* Header */}
         <RequestDetailHeader
-          request={request}
+          request={requestState}
           requesterName={
             requester?.name ??
             "Unknown User"
@@ -169,9 +177,9 @@ export function RequestDetail({
           isSubmittingComment={isSubmittingComment}
           canComment={canComment(
             currentUser.role,
-            request.requesterId,
+            requestState.requesterId,
             currentUser.id,
-            request.status
+            requestState.status
           )}
           reduceMotion={reduceMotion}
         />
@@ -185,7 +193,7 @@ export function RequestDetail({
 
         {/* Actions */}
         <RequestActions
-          request={request}
+          request={requestState}
           currentUser={currentUser}
           users={users}
           selectedAssignee={selectedAssignee}
@@ -194,6 +202,7 @@ export function RequestDetail({
           setIsReassigning={setIsReassigning}
           confirmAction={confirmAction}
           setConfirmAction={setConfirmAction}
+          onRequestUpdated={setRequestState}
         />
 
         {/* Timeline */}
