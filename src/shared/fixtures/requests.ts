@@ -190,5 +190,5 @@ export const UserComments = [
 
 export const requests = [
   ...baseRequests,
-  // ...generatedRequests,
+  ...generatedRequests,
 ];

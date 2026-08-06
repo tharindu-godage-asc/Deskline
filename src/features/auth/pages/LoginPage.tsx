@@ -4,7 +4,6 @@ import { useLogin } from "../../../shared/hooks/useLogin";
 import { useState } from "react";
 import { loginSchema } from "../../requests/schemas/loginSchema";
 import { useToast } from "../../../shared/context/ToastContext";
-import { Input } from "../../../shared/ui/Input";
 
 export function LoginPage() {
 
@@ -264,7 +263,7 @@ const handleLogin = async () => {
             <p>password123</p>
           </div>
         </div>
-      </Card> */}
+      </div>
 
   <Card className="w-full max-w-4xl">
     <div className="flex flex-col gap-8 md:flex-row">
@@ -359,7 +358,7 @@ const handleLogin = async () => {
       </div>
 
       {/* Demo Credentials */}
-      <div className="w-full rounded-lg border p-4 text-sm md:w-72 md:flex-shrink-0">
+      <div className="w-full rounded-lg border p-4 text-sm md:w-72 md:shrink-0">
         <p className="mb-4 text-base font-semibold">
           Demo Accounts
         </p>
