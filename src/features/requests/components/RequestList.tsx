@@ -10,18 +10,16 @@
  */
 
 import type { Request } from "../../../shared/types";
-import { Card } from "../../../shared/ui/Card";
-import { Badge } from "../../../shared/ui/badge/Badge";
-import {useNavigate} from "react-router-dom";
+import { RequestListItem } from "./RequestListItem";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/ui/button/Button";
 import { getCurrentUser } from "../../../shared/api/auth";
 import { isRequester } from "../../../shared/lib/permissions";
 import { useState } from "react";
-
-
 import { LoadingState } from "../components/states/LoadingState";
 import { EmptyState } from "../components/states/EmptyState";
 import { ErrorState } from "./states/ErrorState";
+
 
 type Props = {
   requests: Request[];
@@ -35,7 +33,7 @@ export function RequestList({
 
   const currentUser = getCurrentUser();
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [error, setError] = useState(false);
 
   const handleViewDetails = (requestId: string) => {
@@ -56,16 +54,14 @@ export function RequestList({
   if (error) {
   return (
     <ErrorState
+      title="Unable to load requests"
+      description="Something went wrong while fetching your requests. Please try again."
       onRetry={() =>
         setError(false)
       }
     />
   );
 }
-
-console.log("Current User:", currentUser);
-console.log("All Requests:", requests);
-
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mt-5">
@@ -85,32 +81,13 @@ console.log("All Requests:", requests);
       </div>
 
       {requests.map((request) => (
-        <Card key={request.id}>
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h3 className="font-semibold">
-                {request.title}
-              </h3>
-
-              <p className="text-sm opacity-70">
-                {request.category} • {request.priority}
-              </p>
-
-              <div>
-                <Badge variant={request.status}>
-                  {request.status}
-                </Badge>
-              </div>
-            </div>
-
-
-
-            <Button variant="secondary"
-            onClick={() => handleViewDetails(request.id)}>
-              View Details
-            </Button>
-          </div>
-        </Card>
+        <RequestListItem
+          key={request.id}
+          request={request}
+          onViewDetails={
+            handleViewDetails
+          }
+        />
       ))}
     </div>
   );

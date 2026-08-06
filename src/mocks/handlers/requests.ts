@@ -153,9 +153,43 @@ http.post(
       category: Category;
       priority: Priority;
       requesterId: string;
-      author: string;
+      authorId: string;
       description: string;
     };
+
+    const userId =
+      request.headers.get(
+        "x-user-id"
+      );
+
+
+    const user = users.find(
+      (u) => u.id === userId
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    if (
+      user.role !== "requester"
+    ) {
+      return HttpResponse.json(
+        {
+          message: "Forbidden",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
 
     const newRequest: Request = {
       id: crypto.randomUUID(),
@@ -177,8 +211,8 @@ http.post(
       id: crypto.randomUUID(),
       requestId:
         newRequest.id,
-      author: body.author,
-      message:
+      authorId: body.authorId,
+      body:
         body.description,
       createdAt:
         new Date().toLocaleString(),
@@ -214,6 +248,26 @@ http.post(
       return notFound();
     }
 
+    const userId =
+      request.headers.get(
+        "x-user-id"
+      );
+
+    const user = users.find(
+      (u) => u.id === userId
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        {
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     if (
       req.status === "closed" ||
       req.status === "cancelled"
@@ -232,22 +286,21 @@ http.post(
     const body =
       (await request.json()) as
         | {
-            author: string;
-            message: string;
+            authorId: string;
+            body: string;
           }
         | null;
 
-    if (!body || !body.author || !body.message) {
+    if (!body || !body.authorId || !body.body) {
       return badRequest();
     }
 
     const newComment = {
       id: crypto.randomUUID(),
       requestId,
-      author: body.author,
-      message: body.message,
-      createdAt:
-        new Date().toLocaleString(),
+      authorId: body.authorId,
+      body: body.body,
+      createdAt: new Date().toLocaleString(),
     };
 
     UserComments.push(

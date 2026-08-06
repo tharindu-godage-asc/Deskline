@@ -1,21 +1,27 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
-import { RequestDetail } from "../components/RequestDetail";
+import { RequestDetail } from "../components/request detail/RequestDetail";
 import { getRequestById } from "../../../shared/api/requestApi";
 import { ErrorState } from "../components/states/ErrorState";
 import { LoadingState } from "../components/states/LoadingState";
+import { useAuth } from "../../../shared/context/AuthContext";
+import type { Request } from "../../../shared/types/request";
+import type { Message } from "../../../shared/types/message";
+import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
+import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
 export function RequestDetailPage() {
   const { id } = useParams();
  
   const [isLoading, setIsLoading] = useState(true);
-  const [request, setRequest] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [error, setError] = useState(false);
+  const [request, setRequest] = useState<Request | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [error, setError] = useState<ErrorInfo | null>(null);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!id) {
+    if (!id || !currentUser) {
       setRequest(null);
       setIsLoading(false);
       return;
@@ -24,26 +30,21 @@ export function RequestDetailPage() {
     let cancelled = false;
     setIsLoading(true);
 
-    void getRequestById(id)
+    getRequestById(id, currentUser.id)
       .then((result) => {
         if (!cancelled) {
           setRequest(result.request);
           setMessages(result.messages);
           setIsLoading(false);
-          console.log(
-            "Request API Response - Comments + Details:",
-            result
-          );
-
-          console.log(
-            "Comments:",
-            result.messages
-          );
         }
       })
-      .catch(() => {
+      .catch((error) => {
         if (!cancelled) {
-          setError(true);
+          setError(
+            mapStatusCodeToError(
+              (error as any)?.status
+            )
+          );
           setIsLoading(false);
         }
       });
@@ -51,7 +52,7 @@ export function RequestDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, currentUser]);
 
   if (isLoading) {
     return <LoadingState />;
@@ -60,6 +61,8 @@ export function RequestDetailPage() {
   if (error) {
     return (
       <ErrorState
+        title={error.title}
+        description={error.description}
         onRetry={() =>
           window.location.reload()
         }

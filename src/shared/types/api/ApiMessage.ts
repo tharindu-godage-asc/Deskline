@@ -1,4 +1,4 @@
-export type Message = {
+export type ApiMessage = {
   id: string;
   requestId: string;
   authorId: string;

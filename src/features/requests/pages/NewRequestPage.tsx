@@ -65,9 +65,9 @@ const handleSubmit = async (
               description,
               requesterId:
                 currentUser.id,
-              author:
-                currentUser.name,
-            });
+              authorId:
+                currentUser.id,
+            }, currentUser.id);
             showToast(
               "Request created successfully.",
               "success"
@@ -167,8 +167,8 @@ const handleSubmit = async (
                 Software
               </option>
 
-              <option value="network">
-                Network
+              <option value="facilities">
+                Facilities
               </option>
 
               <option value="access">
