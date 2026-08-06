@@ -19,6 +19,7 @@ import { useState } from "react";
 import { LoadingState } from "../components/states/LoadingState";
 import { EmptyState } from "../components/states/EmptyState";
 import { ErrorState } from "./states/ErrorState";
+import { useAuth } from "../../../shared/context/AuthContext";
 
 
 type Props = {
@@ -31,7 +32,7 @@ export function RequestList({
 
   const navigate = useNavigate();
 
-  const currentUser = getCurrentUser();
+  const { currentUser } = useAuth();
 
   const [loading] = useState(false);
   const [error, setError] = useState(false);

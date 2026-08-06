@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Button } from "../../../shared/ui/button/Button";
 import { Card } from "../../../shared/ui/Card";
 import { requestSchema } from "../schemas/requestSchema";
-import { getCurrentUser } from "../../../shared/api/auth";
 import {createRequest} from "../../../shared/api/requestApi";
 import { useToast } from "../../../shared/context/ToastContext";
 import { Input } from "../../../shared/ui/Input";
 import { Select } from "../../../shared/ui/Select";
+import { useAuth } from "../../../shared/context/AuthContext";
 
 export function NewRequestPage() {
-  const currentUser = getCurrentUser();
+const { currentUser } = useAuth();
 const [title, setTitle] = useState("");
 const [description, setDescription] = useState("");
 const [category, setCategory] = useState("");

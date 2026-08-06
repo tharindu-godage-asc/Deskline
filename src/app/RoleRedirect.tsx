@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { getCurrentUser } from "../shared/api/auth";
 import type { UserRole } from "../shared/types/user";
+import { useAuth } from "../shared/context/AuthContext";
 
 type Props = {
   allowed: UserRole[];
@@ -11,7 +12,7 @@ export function RoleRedirect({
   allowed,
   children,
 }: Props) {
-  const currentUser = getCurrentUser();
+  const { currentUser } = useAuth();
 
     if (!currentUser) {
     return (
