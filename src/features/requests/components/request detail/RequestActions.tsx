@@ -244,9 +244,14 @@ export function RequestActions({
                                     </Button>
                                   </div>
                                 )}
-              </div>
-          </div>
-      </div>
+                            </div>
+                        </div>
+                    </div>
+                            {!selectedAssignee && (
+                                      <p className="text-right mt-1 text-sm text-gray-400">
+                                        Select an assignee to enable reassign.
+                                      </p>
+                                    )}
 
       <ConfirmDialog
                 isOpen={confirmAction !== null}
