@@ -7,6 +7,7 @@ import {
   canSetPending,
   canCloseRequest,
   canReassign,
+  canReopenRequest,
 } from "../../../../shared/lib/permissions";
 import { updateRequest } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
@@ -134,7 +135,7 @@ export function RequestActions({
                                                   },
                                                   currentUser.id
                                                 );
-        
+
                                                 showToast(
                                                   "Request moved to pending.",
                                                   "success"
@@ -148,6 +149,39 @@ export function RequestActions({
                                             }}
                                           >
                                             Set Pending
+                                          </Button>
+                            )}
+
+                    {currentUser &&
+                            canReopenRequest(
+                              currentUser.role,
+                              request.status
+                            ) && (
+                                          <Button
+                                            variant="secondary"
+                                            onClick={async () => {
+                                              try {
+                                                await updateRequest(
+                                                  request.id,
+                                                  {
+                                                    status: "open",
+                                                  },
+                                                  currentUser.id
+                                                );
+
+                                                showToast(
+                                                  "Request reopened.",
+                                                  "success"
+                                                );
+                                              } catch {
+                                                showToast(
+                                                  "Failed to reopen request.",
+                                                  "error"
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            Reopen Request
                                           </Button>
                             )}
                             
