@@ -7,7 +7,7 @@ type Option = {
 };
 
 type Props = {
-  label: string;
+  label?: string;
   value: string;
   options: Option[];
   onChange: (value: string) => void;
@@ -20,7 +20,7 @@ export function SelectFilter({
   onChange,
 }: Props) {
   return (
-    <Field label={label}>
+    <Field label={label ?? ""}>
       <Select
         value={value}
         onChange={(e) => onChange(e.target.value)}

@@ -19,7 +19,7 @@ import { getUsers } from "../../../../shared/api/userApi";
 import { addComment } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
 import { RequestActions } from "./RequestActions";
-import { canViewRequest, canComment } from "../../../../shared/lib/permissions";
+import { canComment } from "../../../../shared/lib/permissions";
 
 import RequestDetailHeader from "./RequestDetailHeader";
 import RequestComments from "./RequestComments";
