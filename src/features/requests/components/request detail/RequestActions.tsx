@@ -11,6 +11,7 @@ import {
 } from "../../../../shared/lib/permissions";
 import { updateRequest } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
+import { SelectFilter } from "../../../../shared/ui/SelectFilter";
 
 type Props = {
   request: Request;
@@ -159,6 +160,7 @@ export function RequestActions({
                                           </Button>
                             )}
 
+                    {/* ReopenRequest */}
                     {currentUser &&
                             canReopenRequest(
                               currentUser.role,
@@ -193,7 +195,6 @@ export function RequestActions({
                                           </Button>
                             )}
                             
-        
                     {/* CloseRequest */}
                             {currentUser &&
                               canCloseRequest(
@@ -210,43 +211,33 @@ export function RequestActions({
                                 </Button>
                               )}
         
-                            {currentUser &&
-                              canReassign(
-                                  currentUser.role
-                                ) && (
-                                  <div className="flex items-center gap-2">
-                                    <select
-                                      value={selectedAssignee}
-                                      onChange={(e) =>
-                                        setSelectedAssignee(
-                                          e.target.value
-                                        )
-                                      }
-                                      className="rounded-md border px-3 py-2"
-                                    >
-                                      <option value="">
-                                        Select Assignee
-                                      </option>
-        
-                                      {users
-                                        .filter(
-                                          (user) =>
-                                            user.role === "technician" ||
-                                            user.role === "admin"
-                                        )
-                                        .filter(
-                                          (user) =>
-                                            user.id !== request.assigneeId
-                                        )
-                                        .map((user) => (
-                                          <option
-                                            key={user.id}
-                                            value={user.id}
-                                          >
-                                            {user.name}
-                                          </option>
-                                        ))}
-                                    </select>
+                            {currentUser && canReassign( currentUser.role) && (
+                              
+                                  <div className="flex items-end gap-2">
+                                    <SelectFilter
+                                        value={selectedAssignee}
+                                        onChange={setSelectedAssignee}
+                                        options={[
+                                          {
+                                            value: "",
+                                            label: "Select Assignee",
+                                          },
+                                          ...users
+                                            .filter(
+                                              (user) =>
+                                                user.role === "technician" ||
+                                                user.role === "admin"
+                                            )
+                                            .filter(
+                                              (user) =>
+                                                user.id !== request.assigneeId
+                                            )
+                                            .map((user) => ({
+                                              value: user.id,
+                                              label: user.name,
+                                            })),
+                                        ]}
+                                      />
         
                                     <Button
                                       disabled={
@@ -286,10 +277,11 @@ export function RequestActions({
                                         : "Reassign"}
                                     </Button>
                                   </div>
+                                    
                                 )}
                             </div>
                         </div>
-                    </div>
+                      </div>
                             {!selectedAssignee && (
                                       <p className="text-right mt-1 text-sm text-gray-400">
                                         Select an assignee to enable reassign.
