@@ -13,26 +13,22 @@ export function ErrorState({
   onRetry,
 }: Props) {
   return (
-    <div className="flex min-h-[50vh] items-center justify-center p-6">
-      <Card className="w-full max-w-lg space-y-5 text-center">
-        <div className="space-y-2">
-          <h3 className="text-xl font-semibold">
-            {title}
-          </h3>
+    <Card>
+      <div className="space-y-3 py-8 text-center">
+        <h3 className="text-lg font-semibold">
+          {title}
+        </h3>
 
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          {description}
+        </p>
 
         {onRetry && (
-          <div className="flex justify-center">
-            <Button onClick={onRetry}>
-              Retry
-            </Button>
-          </div>
+          <Button onClick={onRetry}>
+            Retry
+          </Button>
         )}
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }

@@ -10,7 +10,6 @@ import { useAuth } from "../../../shared/context/AuthContext";
 import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { LoadingState } from "../components/states/LoadingState";
 import { ErrorState } from "../components/states/ErrorState";
-import { EmptyState } from "../components/states/EmptyState";
 import type { ErrorInfo } from "../../../shared/mappers/errorMapper";
 import { mapStatusCodeToError } from "../../../shared/mappers/errorMapper";
 
