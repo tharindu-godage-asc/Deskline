@@ -114,32 +114,52 @@ export const requestHandlers = [
 ),
 
 //  GET Request by ID
-  http.get(
+http.get(
   "/requests/:id",
-  ({ params }) => {
+  ({ params, request }) => {
     const requestId =
       params.id as string;
 
-    const request =
+    const targetRequest =
       requests.find(
         (r) =>
           r.id === requestId
       );
 
-    if (!request) {
-      return notFound()
+    if (!targetRequest) {
+      return notFound();
     }
 
-    const messages =
-      UserComments.filter(
-        (comment) =>
-          comment.requestId ===
-          requestId
+    const userId =
+      request.headers.get(
+        "x-user-id"
       );
 
+    const user = users.find(
+      (u) =>
+        u.id === userId
+    );
+
+    if (!user) {
+      return unauthorized();
+    }
+    if (
+      user.role ===
+        "requester" &&
+      targetRequest.requesterId !==
+        user.id
+    ) {
+      return forbidden();
+    }
+
     return HttpResponse.json({
-      request,
-      messages,
+      request: targetRequest,
+      messages:
+        UserComments.filter(
+          (comment) =>
+            comment.requestId ===
+            requestId
+        ),
     });
   }
 ),
