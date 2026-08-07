@@ -76,9 +76,8 @@ export function RequestDetail({
       );
     }
   }
-
-  loadUsers();
-}, []);
+    loadUsers();
+  }, []);
 
   useEffect(() => {
     setComments(messages);
@@ -99,9 +98,9 @@ export function RequestDetail({
 
     setIsSubmittingComment(true);
     console.log("Submitting comment", {
-  authorId: currentUser.id,
-  body: commentText,
-});
+    authorId: currentUser.id,
+    body: commentText,
+  });
 
     try {
       const newComment = await addComment(
@@ -132,23 +131,6 @@ export function RequestDetail({
       setIsSubmittingComment(false);
     }
   };
-
-//  if (
-//       currentUser &&
-//       !canViewRequest(
-//         currentUser.role,
-//         request.requesterId,
-//         currentUser.id
-//       )
-//     ) {
-//       return (
-//         <Card>
-//           <p className="text-red-500">
-//             You do not have permission to view this request.
-//           </p>
-//         </Card>
-//       );
-//     }
 
   return (
     <Card>
@@ -183,9 +165,6 @@ export function RequestDetail({
           )}
           reduceMotion={reduceMotion}
         />
-
-
-
 
 {/* /////-----------------------------Testing Purposes Only----------------------------\\\\\ */}
 
