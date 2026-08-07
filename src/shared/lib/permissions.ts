@@ -83,9 +83,14 @@ export function canReopenRequest(
 }
 
 export function canReassign(
-  role: UserRole
+  role: UserRole,
+  status: Status
 ) {
-  return role === "admin";
+  return (
+    role === "admin" &&
+    (status === "open" ||
+      status === "pending")
+  );
 }
 
 export function canCancelRequest(

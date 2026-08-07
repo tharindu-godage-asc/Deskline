@@ -122,7 +122,8 @@ export function reassignRequest(
 ) {
   if (
     !canReassign(
-      currentUser.role
+      currentUser.role,
+      request.status
     )
   ) {
     throw new ForbiddenError(

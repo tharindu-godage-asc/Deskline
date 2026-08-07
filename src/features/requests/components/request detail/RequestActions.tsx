@@ -211,7 +211,7 @@ export function RequestActions({
                                 </Button>
                               )}
         
-                            {currentUser && canReassign( currentUser.role) && (
+                            {currentUser && canReassign( currentUser.role, request.status ) && (
                               
                                   <div className="flex items-end gap-2">
                                     <SelectFilter
