@@ -13,14 +13,8 @@ import type { Request } from "../../../shared/types";
 import { RequestListItem } from "./RequestListItem";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../shared/ui/button/Button";
-import { getCurrentUser } from "../../../shared/api/auth";
 import { isRequester } from "../../../shared/lib/permissions";
-import { useState } from "react";
-import { LoadingState } from "../components/states/LoadingState";
-import { EmptyState } from "../components/states/EmptyState";
-import { ErrorState } from "./states/ErrorState";
 import { useAuth } from "../../../shared/context/AuthContext";
-
 
 type Props = {
   requests: Request[];
@@ -31,11 +25,7 @@ export function RequestList({
 }: Props) {
 
   const navigate = useNavigate();
-
   const { currentUser } = useAuth();
-
-  const [loading] = useState(false);
-  const [error, setError] = useState(false);
 
   const handleViewDetails = (requestId: string) => {
     navigate(`/requests/${requestId}`);
@@ -45,24 +35,7 @@ export function RequestList({
     navigate("/requests/new");
   }
 
-  if (loading) return <LoadingState />;
 
-  if (requests.length === 0)
-  return (
-    <EmptyState title="No requests" message="There are no requests." />
-  );
-
-  if (error) {
-  return (
-    <ErrorState
-      title="Unable to load requests"
-      description="Something went wrong while fetching your requests. Please try again."
-      onRetry={() =>
-        setError(false)
-      }
-    />
-  );
-}
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mt-5">
