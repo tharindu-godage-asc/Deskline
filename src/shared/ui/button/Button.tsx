@@ -15,11 +15,12 @@ export function Button({
   loading = false,
   children,
   className,
+  disabled,
   ...props
 }: Props) {
   return (
     <button
-      disabled={loading || props.disabled}
+      disabled={loading || disabled}
       className={cn(
         buttonVariants({ variant, size }),
         className
