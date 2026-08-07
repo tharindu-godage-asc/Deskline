@@ -1,5 +1,4 @@
 import { Navigate } from "react-router-dom";
-import { getCurrentUser } from "../shared/api/auth";
 import type { UserRole } from "../shared/types/user";
 import { useAuth } from "../shared/context/AuthContext";
 

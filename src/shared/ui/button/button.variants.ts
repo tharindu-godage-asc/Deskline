@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  "rounded-md font-medium transition-colors",
+  "rounded-md font-medium transition-colors cursor-pointer disabled:cursor-not-allowedcursor-pointer transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none",
   {
     variants: {
       variant: {
