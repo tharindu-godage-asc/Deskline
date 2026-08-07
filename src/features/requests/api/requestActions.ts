@@ -28,11 +28,6 @@ export function createRequest(
   }
 
   requests.unshift(request);
-
-  console.log(
-    `Request ${request.id} created`
-  );
-
   return request;
 }
 
@@ -53,8 +48,6 @@ export function cancelRequest(
       "You do not have permission to cancel this request."
     );
   }
-
-  console.log("Request cancelled");
 }
 
 export function assignToMe(
@@ -70,10 +63,6 @@ export function assignToMe(
       "You do not have permission to assign requests."
     );
   }
-
-  console.log(
-    `Request ${request.id} assigned to ${currentUser.id}`
-  );
 }
 
 export function setPending(
@@ -89,10 +78,6 @@ export function setPending(
       "You do not have permission to change status."
     );
   }
-
-  console.log(
-    `Request ${request.id} set to pending`
-  );
 }
 
 export function closeRequest(
@@ -109,10 +94,6 @@ export function closeRequest(
       "You do not have permission to close requests."
     );
   }
-
-  console.log(
-    "Request closed"
-  );
 }
 
 export function reassignRequest(
@@ -130,8 +111,4 @@ export function reassignRequest(
       "You do not have permission to reassign requests."
     );
   }
-
-  console.log(
-     `Request ${request.id} reassigned to ${assigneeId}`
-  );
 }
