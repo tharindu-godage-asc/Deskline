@@ -3,6 +3,7 @@
 import { type RouteObject } from "react-router-dom";
 import { RequestDetailPage } from "../../features/requests/pages/RequestDetailPage";
 import { Navigate } from "react-router-dom";
+import { RoleRedirect } from "../RoleRedirect";
 
 export const commonRoutes: RouteObject[] = [
   {
@@ -11,7 +12,17 @@ export const commonRoutes: RouteObject[] = [
   },
 
   {
-    path: "/requests/:id",
-    element: <RequestDetailPage />,
-  },
+  path: "/requests/:id",
+  element: (
+    <RoleRedirect
+      allowed={[
+        "requester",
+        "technician",
+        "admin",
+      ]}
+    >
+      <RequestDetailPage />
+    </RoleRedirect>
+  ),
+},
 ];

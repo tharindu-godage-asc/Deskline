@@ -7,6 +7,7 @@ import { useToast } from "../../../shared/context/ToastContext";
 import { Input } from "../../../shared/ui/Input";
 import { Select } from "../../../shared/ui/Select";
 import { useAuth } from "../../../shared/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function NewRequestPage() {
 const { currentUser } = useAuth();
@@ -22,6 +23,12 @@ const [errors, setErrors] = useState({
 });
 const [isSubmitting, setIsSubmitting] = useState(false);
 const { showToast } = useToast();
+const isFormValid =
+  title.trim() !== "" &&
+  category !== "" &&
+  priority !== "" &&
+  description.trim() !== "";
+const navigate = useNavigate();
 
 
 
@@ -242,10 +249,18 @@ const handleSubmit = async (
             )}
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate("/my-requests")}
+            >
+              Back to Requests
+            </Button>
+
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isFormValid}
             >
               {isSubmitting
                 ? "Creating..."

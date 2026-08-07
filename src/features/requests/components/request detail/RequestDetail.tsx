@@ -27,6 +27,11 @@ import RequestComments from "./RequestComments";
 import type { Message } from "../../../../shared/types/message";
 import type { Request } from "../../../../shared/types/request";
 
+import { LoadingState } from "../states/LoadingState";
+import { ErrorState } from "../states/ErrorState";
+import type { ErrorInfo } from "../../../../shared/mappers/errorMapper";
+import { mapStatusCodeToError } from "../../../../shared/mappers/errorMapper";
+
 interface Props {
   request: Request;
   messages: Message[];
@@ -64,21 +69,45 @@ export function RequestDetail({
   const { reduceMotion } = useMotion();
   const [ isReassigning,setIsReassigning] = useState(false);
 
-  useEffect(() => {
-  async function loadUsers() {
+  const [usersLoading, setUsersLoading] =
+  useState(true);
+
+  const [usersError, setUsersError] =
+    useState<ErrorInfo | null>(null);
+
+  // useEffect(() => {
+  // async function loadUsers() {
+  //   try {
+  //     const data = await getUsers();
+  //     setUsers(data);
+  //   } catch (error) {
+  //     console.error(
+  //       "Failed to load users",
+  //       error
+  //     );
+  //   }
+  // }
+  //   loadUsers();
+  // }, []);
+
+    const loadUsers = async () => {
     try {
+      setUsersLoading(true);
+      setUsersError(null);
+
       const data = await getUsers();
+
       setUsers(data);
     } catch (error) {
-      console.error(
-        "Failed to load users",
-        error
+      setUsersError(
+        mapStatusCodeToError(
+          (error as any)?.status
+        )
       );
+    } finally {
+      setUsersLoading(false);
     }
-  }
-
-  loadUsers();
-}, []);
+  };
 
   useEffect(() => {
     setComments(messages);
@@ -87,6 +116,10 @@ export function RequestDetail({
   useEffect(() => {
     setRequestState(request);
   }, [request]);
+
+  useEffect(() => {
+  loadUsers();
+}, []);
 
   const handleAddComment = async () => {
     if (
@@ -99,9 +132,9 @@ export function RequestDetail({
 
     setIsSubmittingComment(true);
     console.log("Submitting comment", {
-  authorId: currentUser.id,
-  body: commentText,
-});
+    authorId: currentUser.id,
+    body: commentText,
+  });
 
     try {
       const newComment = await addComment(
@@ -133,22 +166,19 @@ export function RequestDetail({
     }
   };
 
-//  if (
-//       currentUser &&
-//       !canViewRequest(
-//         currentUser.role,
-//         request.requesterId,
-//         currentUser.id
-//       )
-//     ) {
-//       return (
-//         <Card>
-//           <p className="text-red-500">
-//             You do not have permission to view this request.
-//           </p>
-//         </Card>
-//       );
-//     }
+  if (usersLoading) {
+    return <LoadingState />;
+  }
+
+  if (usersError) {
+    return (
+      <ErrorState
+        title={usersError.title}
+        description={usersError.description}
+        onRetry={loadUsers}
+      />
+    );
+  }
 
   return (
     <Card>
@@ -157,10 +187,7 @@ export function RequestDetail({
         {/* Header */}
         <RequestDetailHeader
           request={requestState}
-          requesterName={
-            requester?.name ??
-            "Unknown User"
-          }
+          requesterName={requester?.name ?? ""}
           assigneeName={
             assignee?.name ??
             "Unassigned"
@@ -183,9 +210,6 @@ export function RequestDetail({
           )}
           reduceMotion={reduceMotion}
         />
-
-
-
 
 {/* /////-----------------------------Testing Purposes Only----------------------------\\\\\ */}
 
