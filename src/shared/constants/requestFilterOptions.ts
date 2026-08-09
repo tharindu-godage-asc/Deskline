@@ -35,3 +35,22 @@ export const ASSIGNEE_OPTIONS = [
     label: "Me",
   },
 ];
+
+export const SORT_OPTIONS = [
+  {
+    value: "updatedAt-desc",
+    label: "Recently Updated",
+  },
+  {
+    value: "updatedAt-asc",
+    label: "Oldest Updated",
+  },
+  {
+    value: "priority-desc",
+    label: "Priority High → Low",
+  },
+  {
+    value: "priority-asc",
+    label: "Priority Low → High",
+  },
+];
