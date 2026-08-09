@@ -5,7 +5,7 @@ import { getRequests } from "../../../shared/api/requestApi";
 import type { Request } from "../../../shared/types/request";
 import { RequestList } from "../components/RequestList";
 import { RequestFilters as RequestFiltersComponent } from "../components/RequestFilters";
-import { filterRequests } from "../utils/filterRequests";
+import { filterRequests, sortRequests, type SortOption } from "../utils/filterRequests";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useDebounce } from "../../../shared/hooks/useDebounce";
 import { LoadingState } from "../components/states/LoadingState";
@@ -34,17 +34,22 @@ export function QueuePage() {
       300
     );
   const [requests, setRequests] = useState<Request[]>([]);
+  const [sortBy, setSortBy] = useState<SortOption>(
+    "updatedAt-desc"
+  );
 
   const filteredRequests = useMemo(
   () =>
-    filterRequests(
-      requests,
-      {
-      ...filters,
-      search: debouncedSearch
-      },
-      currentUser.id
-
+    sortRequests(
+      filterRequests(
+        requests,
+        {
+          ...filters,
+          search: debouncedSearch
+        },
+        currentUser.id
+      ),
+      sortBy
     ),
   [
     debouncedSearch,
@@ -52,8 +57,9 @@ export function QueuePage() {
     filters.status,
     filters.priority,
     filters.category,
-      requests,
+    requests,
     currentUser.id,
+    sortBy,
   ]
 );
 
@@ -125,6 +131,8 @@ export function QueuePage() {
         filters={filters}
         onChange={setFilters}
         showAssignee
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
       {requests.length > 0 && filteredRequests.length === 0 ? (

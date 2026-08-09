@@ -2,7 +2,7 @@ import { RequestFilters as RequestFiltersComponent } from "../components/Request
 import { RequestList } from "../components/RequestList";
 import type { RequestFilters } from "../../../shared/types/filters";
 import { useState, useMemo, useEffect} from "react";
-import { filterRequests } from "../utils/filterRequests";
+import { filterRequests, sortRequests, type SortOption } from "../utils/filterRequests";
 import { getRequests } from "../../../shared/api/requestApi";
 import type { Request } from "../../../shared/types";
 import { useAuth } from "../../../shared/context/AuthContext";
@@ -21,7 +21,7 @@ export function MyRequestsPage() {
   const [searchParams, setSearchParams] =
   useSearchParams();
 
-    const initialStatus =
+  const initialStatus =
   (searchParams.get("status") as RequestFilters["status"]) ??
   "all";
 
@@ -43,25 +43,32 @@ const [filters, setFilters] =
       300
     );
   
+    
+const [sortBy, setSortBy] =
+  useState<SortOption>("updatedAt-desc");
 
-  const filteredRequests = useMemo(() => {
-    return filterRequests(
-      requests,
-      {
-        ...filters,
-        search: debouncedSearch,
-      },
-      currentUser.id
-    );
-  }, [
-      requests,
-      debouncedSearch,
-      filters.assignee,
-      filters.status,
-      filters.priority,
-      filters.category,
-      currentUser.id,
-  ]);
+
+  const visibleRequests = useMemo(() => {
+  const filtered = filterRequests(
+    requests,
+    {
+      ...filters,
+      search: debouncedSearch,
+    },
+    currentUser.id
+  );
+
+  return sortRequests(
+    filtered,
+    sortBy
+  );
+}, [
+  requests,
+  filters,
+  debouncedSearch,
+  currentUser.id,
+  sortBy,
+]);
 
   useEffect(() => {
   async function loadRequests() {
@@ -133,14 +140,18 @@ if (error) {
   );
 }
 
+
 return (
   <>
     <RequestFiltersComponent
       filters={filters}
       onChange={setFilters}
+      showAssignee={false}
+      sortBy={sortBy}
+      onSortChange={setSortBy}
     />
 
-    {requests.length > 0 && filteredRequests.length === 0 ? (
+    {requests.length > 0 && visibleRequests.length === 0 ? (
       <EmptyState
         title="No matching requests found"
         message="Try changing your search or filters to see matching requests."
@@ -151,7 +162,7 @@ return (
         message="There are no requests."
       />
     ) : (
-      <RequestList requests={filteredRequests} />
+      <RequestList requests={visibleRequests} />
     )}
   </>
 );

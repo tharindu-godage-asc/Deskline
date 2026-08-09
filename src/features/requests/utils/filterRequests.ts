@@ -41,3 +41,51 @@ export function filterRequests(
     );
   });
 }
+
+export type SortOption =
+  | "updatedAt-desc"
+  | "updatedAt-asc"
+  | "priority-desc"
+  | "priority-asc";
+
+const priorityOrder = {
+  high: 3,
+  medium: 2,
+  low: 1,
+};
+
+export function sortRequests(
+  requests: Request[],
+  sortBy: SortOption
+) {
+  return [...requests].sort((a, b) => {
+    switch (sortBy) {
+      case "updatedAt-desc":
+        return (
+          new Date(b.updatedAt).getTime() -
+          new Date(a.updatedAt).getTime()
+        );
+
+      case "updatedAt-asc":
+        return (
+          new Date(a.updatedAt).getTime() -
+          new Date(b.updatedAt).getTime()
+        );
+
+      case "priority-desc":
+        return (
+          priorityOrder[b.priority] -
+          priorityOrder[a.priority]
+        );
+
+      case "priority-asc":
+        return (
+          priorityOrder[a.priority] -
+          priorityOrder[b.priority]
+        );
+
+      default:
+        return 0;
+    }
+  });
+}

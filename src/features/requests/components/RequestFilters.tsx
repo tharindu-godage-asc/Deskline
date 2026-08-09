@@ -1,20 +1,64 @@
 import { Field } from "../../../shared/ui/Field";
 import { Input } from "../../../shared/ui/Input";
 import { SelectFilter } from "../../../shared/ui/SelectFilter";
-import { STATUS_OPTIONS, PRIORITY_OPTIONS, CATEGORY_OPTIONS, ASSIGNEE_OPTIONS } from "../../../shared/constants/requestFilterOptions";
+import { STATUS_OPTIONS, PRIORITY_OPTIONS, CATEGORY_OPTIONS, ASSIGNEE_OPTIONS, SORT_OPTIONS } from "../../../shared/constants/requestFilterOptions";
 import type { RequestFilters as RequestFiltersType } from "../../../shared/types/filters";
+import { useEffect, useRef } from "react";
+import type { SortOption } from "../utils/filterRequests";
 
 type Props = {
   filters: RequestFiltersType;
   onChange: (filters: RequestFiltersType) => void;
   showAssignee?: boolean;
+
+  sortBy: SortOption;
+  onSortChange: (sort: SortOption) => void;
 };
 
 export function RequestFilters({
   filters,
   onChange,
   showAssignee,
+  sortBy,
+  onSortChange,
 }: Props) {
+
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+  const handleKeyDown = (
+    event: KeyboardEvent
+  ) => {
+    const target =
+      event.target as HTMLElement;
+
+    const isTyping =
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.isContentEditable;
+
+    if (isTyping) {
+      return;
+    }
+
+    if (event.key === "/") {
+      event.preventDefault();
+      searchRef.current?.focus();
+    }
+  };
+
+  window.addEventListener(
+    "keydown",
+    handleKeyDown
+  );
+
+  return () => {
+    window.removeEventListener(
+      "keydown",
+      handleKeyDown
+    );
+  };
+}, []);
+
   return (
     <div
     className={`grid gap-4 rounded-xl border p-4 md:grid-cols-2 ${
@@ -28,6 +72,7 @@ export function RequestFilters({
       {/* Search */}
       <Field label="Search">
         <Input
+          ref={searchRef}
           placeholder="Search by title..."
           value={filters.search}
           onChange={(e) =>
@@ -94,6 +139,19 @@ export function RequestFilters({
         }
       />
     )}
+
+    <div className="flex justify-start">
+  <div className="w-64">
+    <SelectFilter
+      label="Sort By"
+      value={sortBy}
+      options={SORT_OPTIONS }
+      onChange={(value) =>
+        onSortChange(value as SortOption)
+      }
+    />
+  </div>
+</div>
     </div>
   );
 }
