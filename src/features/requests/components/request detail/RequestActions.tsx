@@ -9,9 +9,11 @@ import {
   canReassign,
   canReopenRequest,
 } from "../../../../shared/lib/permissions";
-import { updateRequest } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
 import { SelectFilter } from "../../../../shared/ui/SelectFilter";
+
+import { useUpdateRequest } from "../../../../shared/hooks/mutations/useUpdateRequest";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   request: Request;
@@ -58,8 +60,11 @@ export function RequestActions({
   setConfirmAction,
   onRequestUpdated,
 }: Props) {
-  const { showToast } =
-    useToast();
+
+  const updateRequestMutation = useUpdateRequest();
+  const queryClient = useQueryClient();
+
+  const { showToast } = useToast();
 
   return (
     <>
@@ -92,7 +97,8 @@ export function RequestActions({
                     {/* AssignToMe */}
                           {currentUser &&
                             canAssignToMe(
-                              currentUser.role
+                              currentUser.role,
+                              request.status
                             ) &&
                             request.assigneeId !==
                               currentUser.id && (
@@ -100,16 +106,19 @@ export function RequestActions({
                                 variant="secondary"
                                 onClick={async () => {
                                   try {
-                                    const updatedRequest = await updateRequest(
-                                      request.id,
-                                      {
-                                        assigneeId:
-                                          currentUser.id,
-                                      },
-                                      currentUser.id
-                                    );
+                                    const updatedRequest =
+                                      await updateRequestMutation.mutateAsync({
+                                        requestId: request.id,
+                                        currentUserId: currentUser.id,
+                                        assigneeId: currentUser.id,
+                                      });
+
+                                      await queryClient.invalidateQueries({
+                                        queryKey: ["request", request.id],
+                                      });
 
                                     onRequestUpdated(updatedRequest);
+                                    
                                     showToast(
                                       "Assigned to you.",
                                       "success"
@@ -135,13 +144,16 @@ export function RequestActions({
                                             variant="secondary"
                                             onClick={async () => {
                                               try {
-                                                const updatedRequest = await updateRequest(
-                                                  request.id,
-                                                  {
+                                                const updatedRequest =
+                                                  await updateRequestMutation.mutateAsync({
+                                                    requestId: request.id,
+                                                    currentUserId: currentUser.id,
                                                     status: "pending",
-                                                  },
-                                                  currentUser.id
-                                                );
+                                                  });
+
+                                                await queryClient.invalidateQueries({
+                                                  queryKey: ["request", request.id],
+                                                });
 
                                                 onRequestUpdated(updatedRequest);
                                                 showToast(
@@ -170,13 +182,16 @@ export function RequestActions({
                                             variant="secondary"
                                             onClick={async () => {
                                               try {
-                                                const updatedRequest = await updateRequest(
-                                                  request.id,
-                                                  {
+                                                const updatedRequest =
+                                                  await updateRequestMutation.mutateAsync({
+                                                    requestId: request.id,
+                                                    currentUserId: currentUser.id,
                                                     status: "open",
-                                                  },
-                                                  currentUser.id
-                                                );
+                                                  });
+
+                                                await queryClient.invalidateQueries({
+                                                  queryKey: ["request", request.id],
+                                                });
 
                                                 onRequestUpdated(updatedRequest);
                                                 showToast(
@@ -248,14 +263,16 @@ export function RequestActions({
                                         try {
                                           setIsReassigning(true);
 
-                                          const updatedRequest = await updateRequest(
-                                            request.id,
-                                            {
-                                              assigneeId:
-                                                selectedAssignee,
-                                            },
-                                            currentUser.id
-                                          );
+                                          const updatedRequest =
+                                            await updateRequestMutation.mutateAsync({
+                                              requestId: request.id,
+                                              currentUserId: currentUser.id,
+                                              assigneeId: selectedAssignee,
+                                            });
+
+                                          await queryClient.invalidateQueries({
+                                            queryKey: ["request", request.id],
+                                          });
 
                                           onRequestUpdated(updatedRequest);
                                           showToast(
@@ -305,13 +322,16 @@ export function RequestActions({
                    if (
                           confirmAction === "cancel"
                         ) {
-                          const updatedRequest = await updateRequest(
-                            request.id,
-                            {
+                          const updatedRequest =
+                            await updateRequestMutation.mutateAsync({
+                              requestId: request.id,
+                              currentUserId: currentUser.id,
                               status: "cancelled",
-                            },
-                            currentUser.id
-                          );
+                            });
+
+                          await queryClient.invalidateQueries({
+                            queryKey: ["request", request.id],
+                          });
 
                           onRequestUpdated(updatedRequest);
                           showToast(
@@ -323,13 +343,16 @@ export function RequestActions({
                         if (
                           confirmAction === "close"
                         ) {
-                          const updatedRequest = await updateRequest(
-                            request.id,
-                            {
+                          const updatedRequest =
+                            await updateRequestMutation.mutateAsync({
+                              requestId: request.id,
+                              currentUserId: currentUser.id,
                               status: "closed",
-                            },
-                            currentUser.id
-                          );
+                            });
+
+                          await queryClient.invalidateQueries({
+                              queryKey: ["request", request.id],
+                          });
 
                           onRequestUpdated(updatedRequest);
                           showToast(
