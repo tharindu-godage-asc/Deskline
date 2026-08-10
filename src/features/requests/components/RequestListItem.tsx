@@ -3,6 +3,8 @@ import type { Request } from "../../../shared/types";
 import { Card } from "../../../shared/ui/Card";
 import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
+import { useUsers } from "../../../shared/hooks/queries/useUsers";
+import { getUserNameById } from "../../../shared/hooks/queries/useUsers";
 
 import {
   categoryIcons,
@@ -26,6 +28,19 @@ export function RequestListItem({
   request,
   onViewDetails,
 }: Props) {
+
+  const {
+  data: users = [],
+  isLoading,
+  error,
+} = useUsers();
+
+  const requesterName =
+  getUserNameById(
+    users,
+    request.requesterId
+  );
+
   return (
     <Card
       className={`group relative overflow-hidden transition-transform duration-200
@@ -80,14 +95,25 @@ export function RequestListItem({
           </div>
         </div>
 
-        <Button
-          variant="secondary"
-          onClick={() =>
-            onViewDetails(request.id)
-          }
-        >
-          View Details
-        </Button>
+          {/* Right Column */}
+        <div className="flex flex-col items-end gap-2 text-sm">
+          <Button
+            variant="secondary"
+            onClick={() =>
+              onViewDetails(request.id)
+            }
+          >
+            View Details
+          </Button>
+
+          <div className="text-muted-foreground">
+            Created by {requesterName}
+          </div>
+
+          <div className="text-muted-foreground">
+            Last Updated at {request.updatedAt}
+          </div>
+        </div>
       </div>
     </Card>
   );
