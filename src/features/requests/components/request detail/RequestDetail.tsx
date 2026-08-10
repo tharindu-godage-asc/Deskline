@@ -15,7 +15,6 @@ import { useAuth } from "../../../../shared/context/AuthContext";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../../shared/hooks/useMotion";
 import { useMemo } from "react";
-import { getUsers } from "../../../../shared/api/userApi";
 import { addComment } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
 import { RequestActions } from "./RequestActions";
@@ -29,8 +28,9 @@ import type { Request } from "../../../../shared/types/request";
 
 import { LoadingState } from "../states/LoadingState";
 import { ErrorState } from "../states/ErrorState";
-import type { ErrorInfo } from "../../../../shared/mappers/errorMapper";
 import { mapStatusCodeToError } from "../../../../shared/mappers/errorMapper";
+
+import { useUsers } from "../../../../shared/hooks/queries/useUsers";
 
 interface Props {
   request: Request;
@@ -41,10 +41,13 @@ export function RequestDetail({
   request,
   messages,
 }: Props) {
+
+
+  const { data: users = [], isLoading: queryUsersLoading, error: queryUsersError} = useUsers();
   const [requestState, setRequestState] = useState<Request>(request);
   const [selectedAssignee, setSelectedAssignee] = useState("");
   const { currentUser } = useAuth();
-  const [users, setUsers] = useState<any[]>([]);
+  // const [users, setUsers] = useState<any[]>([]);
   const requester = useMemo(
     () =>
       users.find(
@@ -69,45 +72,6 @@ export function RequestDetail({
   const { reduceMotion } = useMotion();
   const [ isReassigning,setIsReassigning] = useState(false);
 
-  const [usersLoading, setUsersLoading] =
-  useState(true);
-
-  const [usersError, setUsersError] =
-    useState<ErrorInfo | null>(null);
-
-  // useEffect(() => {
-  // async function loadUsers() {
-  //   try {
-  //     const data = await getUsers();
-  //     setUsers(data);
-  //   } catch (error) {
-  //     console.error(
-  //       "Failed to load users",
-  //       error
-  //     );
-  //   }
-  // }
-  //   loadUsers();
-  // }, []);
-
-    const loadUsers = async () => {
-    try {
-      setUsersLoading(true);
-      setUsersError(null);
-
-      const data = await getUsers();
-
-      setUsers(data);
-    } catch (error) {
-      setUsersError(
-        mapStatusCodeToError(
-          (error as any)?.status
-        )
-      );
-    } finally {
-      setUsersLoading(false);
-    }
-  };
 
   useEffect(() => {
     setComments(messages);
@@ -116,10 +80,6 @@ export function RequestDetail({
   useEffect(() => {
     setRequestState(request);
   }, [request]);
-
-  useEffect(() => {
-  loadUsers();
-}, []);
 
   const handleAddComment = async () => {
     if (
@@ -166,20 +126,25 @@ export function RequestDetail({
     }
   };
 
-  if (usersLoading) {
+  if (queryUsersLoading) {
     return <LoadingState />;
   }
 
-  if (usersError) {
+  if (queryUsersError) {
+    const errorInfo = mapStatusCodeToError(
+      (queryUsersError as any)?.status
+    );
+
     return (
       <ErrorState
-        title={usersError.title}
-        description={usersError.description}
-        onRetry={loadUsers}
+        title={errorInfo.title}
+        description={errorInfo.description}
+        onRetry={() => window.location.reload()}
       />
     );
   }
 
+  console.log("TanStack Users:", users);
   return (
     <Card>
       <div className="space-y-6">
