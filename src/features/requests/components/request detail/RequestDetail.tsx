@@ -31,6 +31,8 @@ import { ErrorState } from "../states/ErrorState";
 import { mapStatusCodeToError } from "../../../../shared/mappers/errorMapper";
 
 import { useUsers } from "../../../../shared/hooks/queries/useUsers";
+import { useAddComment } from "../../../../shared/hooks/mutations/useAddComment";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   request: Request;
@@ -57,6 +59,10 @@ export function RequestDetail({
     [users, requestState.requesterId]
   );
   const { showToast } = useToast();
+
+  const addCommentMutation = useAddComment();
+  const queryClient = useQueryClient();
+
   const assignee = useMemo(
     () =>
       users.find(
@@ -91,19 +97,18 @@ export function RequestDetail({
     }
 
     setIsSubmittingComment(true);
-    console.log("Submitting comment", {
-    authorId: currentUser.id,
-    body: commentText,
-  });
 
     try {
-      const newComment = await addComment(
-        requestState.id,
-        {
+      const newComment =
+        await addCommentMutation.mutateAsync({
+          requestId: requestState.id,
           authorId: currentUser.id,
           body: commentText,
-        }
-      );
+        });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["request", requestState.id],
+  });
 
       setComments((prev) => [
         ...prev,
@@ -144,7 +149,6 @@ export function RequestDetail({
     );
   }
 
-  console.log("TanStack Users:", users);
   return (
     <Card>
       <div className="space-y-6">
