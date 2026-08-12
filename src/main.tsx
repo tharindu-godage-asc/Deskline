@@ -16,6 +16,8 @@ if (
   await worker.start();
 }
 
+// createRoot connects React to the HTML document.
+
 createRoot(document.getElementById('root')!).render(
   <AuthProvider>
     <ToastProvider>
@@ -23,3 +25,6 @@ createRoot(document.getElementById('root')!).render(
     </ToastProvider>
   </AuthProvider>,
 )
+
+// A React Context Provider makes some state or functionality 
+// available to descendant components.

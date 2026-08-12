@@ -21,19 +21,14 @@ type Props = {
 
 export function AppShell({ children }: Props) {
   const { theme, toggleTheme } = useTheme();
-  const {
-  reduceMotion,
-  toggleMotion,
-} = useMotion();
-
-
-const { currentUser, logout } = useAuth();
-const { showToast } = useToast();
-const handleLogout = () => {
-  logout();
-  router.navigate("/login");
-  showToast("Logged out successfully.", "success");
-};
+  const { reduceMotion, toggleMotion } = useMotion();
+  const { currentUser, logout } = useAuth();
+  const { showToast } = useToast();
+  const handleLogout = () => {
+    logout();
+    router.navigate("/login");
+    showToast("Logged out successfully.", "success");
+  };
 
   return (
     <div className="min-h-screen">
