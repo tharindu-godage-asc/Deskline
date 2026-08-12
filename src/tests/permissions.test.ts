@@ -18,7 +18,6 @@ import {
 
 
 describe("permissions", () => {
-
   describe("role checks", () => {
     it("identifies users with the requester role", () => {
       expect(isRequester("requester")).toBe(true);
@@ -182,7 +181,7 @@ describe("permissions", () => {
 
     it("blocks requester from assigning requests", () => {
       expect(
-        canAssignToMe("requester")
+        canAssignToMe("requester", "open")
       ).toBe(false);
     });
 
@@ -209,16 +208,33 @@ describe("permissions", () => {
 
 
     describe("request management", () => {
-      it("allows technician to assign requests to themselves", () => {
+      it("allows technician to assign an open request", () => {
         expect(
-          canAssignToMe("technician")
+          canAssignToMe("technician", "open")
         ).toBe(true);
       });
 
+      it("allows technician to assign a pending request", () => {
+        expect(
+          canAssignToMe("technician", "pending")
+        ).toBe(true);
+      });
+
+      it("blocks requester from assigning an open request", () => {
+        expect(
+          canAssignToMe("requester", "open")
+        ).toBe(false);
+      });
+
+      it("blocks requester from assigning a pending request", () => {
+        expect(
+          canAssignToMe("requester", "pending")
+        ).toBe(false);
+      });
 
       it("allows technician to set requests to pending", () => {
         expect(
-          canSetPending("technician")
+          canSetPending("technician","open")
         ).toBe(true);
       });
 
@@ -289,14 +305,14 @@ describe("permissions", () => {
 
       it("allows admin to assign requests to themselves", () => {
         expect(
-          canAssignToMe("admin")
+          canAssignToMe("admin","open")
         ).toBe(true);
       });
 
 
       it("allows admin to set requests to pending", () => {
         expect(
-          canSetPending("admin")
+          canSetPending("admin","open")
         ).toBe(true);
       });
 
