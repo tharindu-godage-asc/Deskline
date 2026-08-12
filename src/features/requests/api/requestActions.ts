@@ -11,11 +11,13 @@ import {
   canCreateRequest
 } from "../../../shared/lib/permissions";
 
+import type { User, Request } from "../../../shared/types";
+
 import { requests } from "../../../shared/fixtures/requests";
 
 export function createRequest(
-  currentUser: any,
-  request: any
+  currentUser: User,
+  request: Request
 ) {
   if (
     !canCreateRequest(
@@ -32,8 +34,8 @@ export function createRequest(
 }
 
 export function cancelRequest(
-  currentUser: any,
-  request: any
+  currentUser: User,
+  request: Request
 ) {
   const allowed =
     canCancelRequest(
@@ -51,12 +53,13 @@ export function cancelRequest(
 }
 
 export function assignToMe(
-  currentUser: any,
-  request: any
+  currentUser: User,
+  request: Request
 ) {
   if (
     !canAssignToMe(
-      currentUser.role
+      currentUser.role,
+      request.status
     )
   ) {
     throw new ForbiddenError(
@@ -66,12 +69,13 @@ export function assignToMe(
 }
 
 export function setPending(
-  currentUser: any,
-  request: any
+  currentUser: User,
+  request: Request
 ) {
   if (
     !canSetPending(
-      currentUser.role
+      currentUser.role,
+      request.status
     )
   ) {
     throw new ForbiddenError(
@@ -81,8 +85,8 @@ export function setPending(
 }
 
 export function closeRequest(
-  currentUser: any,
-  request: any
+  currentUser: User,
+  request: Request
 ) {
   if (
     !canCloseRequest(
@@ -97,9 +101,8 @@ export function closeRequest(
 }
 
 export function reassignRequest(
-  currentUser: any,
-  request: any,
-  assigneeId: string
+  currentUser: User,
+  request: Request
 ) {
   if (
     !canReassign(

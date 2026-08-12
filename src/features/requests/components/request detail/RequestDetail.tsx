@@ -15,7 +15,6 @@ import { useAuth } from "../../../../shared/context/AuthContext";
 import { useState, useEffect } from "react";
 import { useMotion } from "../../../../shared/hooks/useMotion";
 import { useMemo } from "react";
-import { addComment } from "../../../../shared/api/requestApi";
 import { useToast } from "../../../../shared/context/ToastContext";
 import { RequestActions } from "./RequestActions";
 import { canComment } from "../../../../shared/lib/permissions";
