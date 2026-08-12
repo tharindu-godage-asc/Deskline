@@ -1,4 +1,6 @@
-export async function getUsers() {
+import type { User } from "../types";
+
+export async function getUsers(): Promise<User[]> {
   const response =
     await fetch("/users");
 
@@ -8,5 +10,5 @@ export async function getUsers() {
     );
   }
 
-  return response.json();
+  return response.json() as Promise<User[]>;
 }
