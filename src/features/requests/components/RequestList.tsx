@@ -9,6 +9,8 @@
  * request actions.
  */
 
+import { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import type { Request } from "../../../shared/types";
 import { RequestListItem } from "./RequestListItem";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +29,15 @@ export function RequestList({
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
+  const scrollParentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: requests.length,
+    getScrollElement: () => scrollParentRef.current,
+    estimateSize: () => 76,
+    overscan: 5,
+  });
+
   const handleViewDetails = (requestId: string) => {
     navigate(`/requests/${requestId}`);
   }
@@ -38,7 +49,7 @@ export function RequestList({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between mt-5">
+      <div className="flex items-center justify-between mt-5 mb-5">
         <h2 className="text-xl font-semibold">
           Requests
         </h2>
@@ -54,15 +65,45 @@ export function RequestList({
         )}
       </div>
 
-      {requests.map((request) => (
-        <RequestListItem
-          key={request.id}
-          request={request}
-          onViewDetails={
-            handleViewDetails
-          }
-        />
-      ))}
+      <div
+        ref={scrollParentRef}
+        className="max-h-[calc(100vh-260px)] overflow-y-auto pr-1 pt-3"
+      >
+        <div
+          style={{
+            height: rowVirtualizer.getTotalSize(),
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const request = requests[virtualRow.index];
+
+            return (
+              <div
+                key={request.id}
+                data-index={virtualRow.index}
+                ref={rowVirtualizer.measureElement}
+                className="pb-2"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                <RequestListItem
+                  request={request}
+                  onViewDetails={
+                    handleViewDetails
+                  }
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

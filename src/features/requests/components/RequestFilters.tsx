@@ -62,7 +62,7 @@ export function RequestFilters({
   return (
     <div
     className={`grid gap-4 rounded-xl border p-4 md:grid-cols-2 ${
-      showAssignee ? "lg:grid-cols-5" : "lg:grid-cols-4"
+      showAssignee ? "lg:grid-cols-6" : "lg:grid-cols-5"
     }`}
     style={{
       backgroundColor: "var(--color-surface)",
