@@ -119,6 +119,41 @@ Other scripts:
 | `npm run e2e` | Run Playwright end-to-end tests (expects the dev server at `http://localhost:5173`) |
 | `npm run e2e:ui` / `npm run e2e:headed` | Playwright tests in UI mode / headed browser mode |
 
+## Testing
+
+The project has two separate test layers: Vitest for fast unit tests, and Playwright for end-to-end browser tests against the running app.
+
+### Unit tests (Vitest)
+
+```bash
+npm test              # run once
+npm run test:watch    # watch mode
+npm run test:coverage # run with V8 coverage report
+```
+
+Tests live in [src/tests/](src/tests/) and cover pure logic rather than components:
+
+| File | Covers |
+| --- | --- |
+| [filterRequests.test.ts](src/tests/filterRequests.test.ts) | `filterRequests`/`sortRequests` — status/priority/category/assignee/search filtering (incl. case-insensitivity and combined filters), all sort orders, and that sorting doesn't mutate the input array |
+| [permissions.test.ts](src/tests/permissions.test.ts) | Role checks and the full requester/technician/admin permission matrix (view, create, cancel, comment, assign, reopen, close) from [permissions.ts](src/shared/lib/permissions.ts) |
+| [requestSchema.test.ts](src/tests/requestSchema.test.ts) | Zod validation for the new-request form — accepts a valid payload, rejects empty title/category/priority/description |
+| [errorMapper.test.ts](src/tests/errorMapper.test.ts) | Maps HTTP status codes (400/401/403/404/500, unknown, undefined) to user-facing error messages |
+
+`test:coverage` writes an HTML/text report to `coverage/` via `@vitest/coverage-v8`; no coverage thresholds are enforced yet, it's informational.
+
+### End-to-end tests (Playwright)
+
+```bash
+npm run e2e          # headless run against http://localhost:5173
+npm run e2e:ui       # interactive Playwright UI mode
+npm run e2e:headed   # headed (visible) browser run
+```
+
+Playwright ([playwright.config.ts](playwright.config.ts)) points at `http://localhost:5173` but does **not** start the dev server itself — run `npm run dev` in a separate terminal first (or `npm run preview` after a build), then run `npm run e2e`.
+
+Coverage today is the login flow in [auth.spec.ts](e2e/auth.spec.ts): the login page loads, requester/technician/admin credentials redirect to the correct landing route (`my-requests` vs `queue`), and an invalid password surfaces the "Invalid email or password." error. Since MSW auto-starts in dev, no extra backend or fixture setup is needed for e2e runs either.
+
 ## Why MSW Is Used
 
 Mock Service Worker (MSW) is used to simulate API responses locally without needing a real backend. It's wired up in [main.tsx](src/main.tsx) to start only in dev builds (`import.meta.env.DEV`), so it never ships in production and never has to be manually toggled — it just works after `npm install` + `npm run dev`. This lets frontend development, UI states, and route behavior be exercised reliably while the app stays fully interactive without a live server.
