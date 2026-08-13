@@ -4,12 +4,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type { User } from "../types";
 
 import { getCurrentUser } from "../api/auth";
 
 type AuthContextType = {
-  currentUser: any;
-  login: (user: any) => void;
+  currentUser: User;
+  login: (user: User) => void;
   logout: () => void;
 };
 
@@ -28,7 +29,7 @@ export function AuthProvider({
   const [currentUser, setCurrentUser] =
     useState(getCurrentUser());
 
-  const login = (user: any) => {
+  const login = (user: User) => {
     localStorage.setItem(
       "currentUser",
       JSON.stringify(user)

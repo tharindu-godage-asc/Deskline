@@ -137,7 +137,8 @@ export function RequestActions({
                     {/* SetPending */}
                             {currentUser &&
                             canSetPending(
-                              currentUser.role
+                              currentUser.role,
+                              request.status
                             ) &&
                             request.status === "open" && (
                                           <Button

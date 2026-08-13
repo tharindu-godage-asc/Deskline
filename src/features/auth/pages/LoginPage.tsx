@@ -64,12 +64,12 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center px-4 py-10" style={{ background: "var(--color-background)" }}>
+    <div className="flex min-h-screen items-center justify-center px-4 py-10" style={{ background: "var(--color-background)" }}>
       <Card className="w-full max-w-4xl">
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="flex-1 space-y-6">
             <div>
-              <h1 className="text-2xl font-bold">Support Portal</h1>
+              <h1 className="text-2xl font-bold">Deskline Support Portal</h1>
             </div>
 
             <form className="space-y-4" onSubmit={(event) => {

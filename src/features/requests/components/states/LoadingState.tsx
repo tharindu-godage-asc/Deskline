@@ -5,7 +5,7 @@ type Props = {
 };
 
 export function LoadingState({
-  message = "Loading requests...",
+  message = "Loading.....",
 }: Props) {
   return (
     <Card>
