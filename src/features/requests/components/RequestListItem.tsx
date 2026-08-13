@@ -56,7 +56,7 @@ export function RequestListItem({
 
   return (
     <Card
-      className={`group relative overflow-hidden transition-transform duration-200
+      className={`group relative overflow-hidden p-3 transition-transform duration-200
         hover:-translate-y-0.5
         ${getPriorityHoverRingClass(
           request.priority
@@ -69,25 +69,25 @@ export function RequestListItem({
         )}`}
       />
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full dark:ring-slate-600">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-start gap-2">
+          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full dark:ring-slate-600">
             {categoryIcons[
               request.category
             ] ?? defaultCategoryIcon}
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold">
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold">
               {request.title}
             </h3>
 
-            <div className="flex items-center text-sm">
+            <div className="flex items-center text-xs">
               <span>
                 {request.category}
               </span>
 
-              <span className="mx-2 text-muted-foreground">
+              <span className="mx-1.5 text-muted-foreground">
                 •
               </span>
 
@@ -109,9 +109,10 @@ export function RequestListItem({
         </div>
 
           {/* Right Column */}
-        <div className="flex flex-col items-end gap-2 text-sm">
+        <div className="flex flex-col items-end gap-1 text-xs">
           <Button
             variant="secondary"
+            size="sm"
             onClick={() =>
               onViewDetails(request.id)
             }
