@@ -49,7 +49,7 @@ export function RequestList({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between mt-5">
+      <div className="flex items-center justify-between mt-5 mb-5">
         <h2 className="text-xl font-semibold">
           Requests
         </h2>
@@ -67,7 +67,7 @@ export function RequestList({
 
       <div
         ref={scrollParentRef}
-        className="max-h-[calc(100vh-260px)] overflow-y-auto pr-1"
+        className="max-h-[calc(100vh-260px)] overflow-y-auto pr-1 pt-3"
       >
         <div
           style={{
