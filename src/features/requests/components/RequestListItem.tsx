@@ -79,13 +79,16 @@ export function RequestListItem({
 
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="truncate text-sm font-semibold">
-                {request.title}
-              </h3>
 
               <Badge variant={request.status}>
                 {request.status}
               </Badge>
+
+              <h3 className="truncate text-sm font-semibold">
+                {request.title}
+              </h3>
+
+              
             </div>
 
             <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
@@ -125,7 +128,7 @@ export function RequestListItem({
           </Button>
 
           <span className="text-[11px] text-muted-foreground">
-            Updated {request.updatedAt}
+            Last Updated at {request.updatedAt}
           </span>
         </div>
       </div>

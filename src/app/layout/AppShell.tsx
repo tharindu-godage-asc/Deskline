@@ -7,7 +7,7 @@
  * a consistent layout and styling.
  */
 
-import { type ReactNode } from "react";
+import { type ReactNode, useSyncExternalStore } from "react";
 import { useTheme } from "../../shared/hooks/useTheme";
 import { Button } from "../../shared/ui/button/Button";
 import { router } from "../router";
@@ -24,6 +24,12 @@ export function AppShell({ children }: Props) {
   const { reduceMotion, toggleMotion } = useMotion();
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
+  const pathname = useSyncExternalStore(
+    (callback) => router.subscribe(callback),
+    () => router.state.location.pathname
+  );
+  const isLoginPage = pathname === "/login";
+
   const handleLogout = () => {
     logout();
     router.navigate("/login");
@@ -32,6 +38,7 @@ export function AppShell({ children }: Props) {
 
   return (
     <div className="min-h-screen">
+      {!isLoginPage && (
       <header
         className="border-b"
         style={{
@@ -110,8 +117,9 @@ export function AppShell({ children }: Props) {
           </div>
         </div>
       </header>
+      )}
 
-      <main className="mx-auto max-w-7xl p-6">
+      <main className={isLoginPage ? "" : "mx-auto max-w-7xl p-6"}>
         {children}
       </main>
     </div>
