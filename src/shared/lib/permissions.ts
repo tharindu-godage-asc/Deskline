@@ -44,11 +44,12 @@ export function canCreateRequest(
 }
 
 export function canSetPending(
-  role: UserRole
+  role: UserRole,
+  status: Status
 ) {
   return (
-    role === "technician" ||
-    role === "admin"
+    (role === "technician" || role === "admin") 
+    && (status === "open" || status === "pending")
   );
 }
 

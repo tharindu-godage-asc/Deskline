@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { filterRequests } from "../features/requests/utils/filterRequests";
+import {
+  filterRequests,
+  sortRequests,
+  type SortOption,
+} from "../features/requests/utils/filterRequests";
 
 const requests = [
   {
@@ -197,5 +201,62 @@ describe("filterRequests", () => {
     );
 
     expect(result).toEqual([]);
+  });
+});
+
+const sortableRequests = [
+  {
+    id: "r1",
+    title: "VPN issue",
+    priority: "high",
+    updatedAt: "2024-01-10T00:00:00.000Z",
+  },
+  {
+    id: "r2",
+    title: "Laptop screen flickering",
+    priority: "medium",
+    updatedAt: "2024-01-20T00:00:00.000Z",
+  },
+  {
+    id: "r3",
+    title: "Printer not working",
+    priority: "low",
+    updatedAt: "2024-01-15T00:00:00.000Z",
+  },
+] as any[];
+
+describe("sortRequests", () => {
+  it("sorts by updatedAt descending", () => {
+    const result = sortRequests(sortableRequests, "updatedAt-desc");
+    expect(result.map((r) => r.id)).toEqual(["r2", "r3", "r1"]);
+  });
+
+  it("sorts by updatedAt ascending", () => {
+    const result = sortRequests(sortableRequests, "updatedAt-asc");
+    expect(result.map((r) => r.id)).toEqual(["r1", "r3", "r2"]);
+  });
+
+  it("sorts by priority descending", () => {
+    const result = sortRequests(sortableRequests, "priority-desc");
+    expect(result.map((r) => r.id)).toEqual(["r1", "r2", "r3"]);
+  });
+
+  it("sorts by priority ascending", () => {
+    const result = sortRequests(sortableRequests, "priority-asc");
+    expect(result.map((r) => r.id)).toEqual(["r3", "r2", "r1"]);
+  });
+
+  it("returns requests unchanged for an unrecognized sort option", () => {
+    const result = sortRequests(
+      sortableRequests,
+      "unknown" as SortOption
+    );
+    expect(result.map((r) => r.id)).toEqual(["r1", "r2", "r3"]);
+  });
+
+  it("does not mutate the original array", () => {
+    const original = [...sortableRequests];
+    sortRequests(sortableRequests, "updatedAt-desc");
+    expect(sortableRequests).toEqual(original);
   });
 });

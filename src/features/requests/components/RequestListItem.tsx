@@ -5,6 +5,8 @@ import { Badge } from "../../../shared/ui/badge/Badge";
 import { Button } from "../../../shared/ui/button/Button";
 import { useUsers } from "../../../shared/hooks/queries/useUsers";
 import { getUserNameById } from "../../../shared/hooks/queries/useUsers";
+import { LoadingState } from "../../requests/components/states/LoadingState"
+import { ErrorState } from "../../requests/components/states/ErrorState"
 
 import {
   categoryIcons,
@@ -40,6 +42,17 @@ export function RequestListItem({
     users,
     request.requesterId
   );
+
+  if(isLoading){
+    return <LoadingState />;
+  }
+
+  if(error){
+    return <ErrorState         
+        title={error.message}
+        description={error.name}
+        onRetry={() => window.location.reload()} />;
+  }
 
   return (
     <Card
