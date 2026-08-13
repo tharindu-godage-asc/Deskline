@@ -103,27 +103,62 @@ As development progresses, the project will be extended with:
 
 ## How to Run the App
 
-1. Install dependencies with `npm install`.
-2. Start the development server with `npm run dev`.
-3. Open the local Vite URL shown in the terminal to view the app.
+1. Install dependencies: `npm install`
+2. Start the dev server: `npm run dev`, then open the local Vite URL shown in the terminal (default `http://localhost:5173`).
+3. No `.env` or backend setup is needed — Mock Service Worker (MSW) starts automatically in dev mode (see below) and serves fixture data.
+
+Other scripts:
+
+| Command | Purpose |
+| --- | --- |
+| `npm run build` | Type-check (`tsc -b`) and produce a production build |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm test` / `npm run test:watch` | Run unit tests with Vitest |
+| `npm run test:coverage` | Run unit tests with coverage |
+| `npm run e2e` | Run Playwright end-to-end tests (expects the dev server at `http://localhost:5173`) |
+| `npm run e2e:ui` / `npm run e2e:headed` | Playwright tests in UI mode / headed browser mode |
 
 ## Why MSW Is Used
 
-Mock Service Worker (MSW) is used to simulate API responses locally without needing a real backend. This allows frontend development, UI testing, and route behavior to be exercised reliably while keeping the app fully interactive in development.
+Mock Service Worker (MSW) is used to simulate API responses locally without needing a real backend. It's wired up in [main.tsx](src/main.tsx) to start only in dev builds (`import.meta.env.DEV`), so it never ships in production and never has to be manually toggled — it just works after `npm install` + `npm run dev`. This lets frontend development, UI states, and route behavior be exercised reliably while the app stays fully interactive without a live server.
 
 ## Theme Approach
 
-The app uses CSS custom properties and a token-based styling system to support theming consistently across components. Colors and surface values are defined centrally in the shared styles layer, making it easier to adjust light and dark themes without scattering styling logic throughout the UI.
+Theming is token-based: colors, status/priority/category colors, and motion durations are defined once as CSS custom properties in [tokens.css](src/styles/tokens.css), scoped under `:root` for light and overridden under `[data-theme="dark"]` for dark. Components never hardcode colors — they consume the tokens (directly or via Tailwind), so switching themes never requires touching component styling logic.
+
+The active theme is controlled by [useTheme.ts](src/shared/hooks/useTheme.ts), which:
+
+- Initializes from `localStorage`, falling back to the OS preference (`prefers-color-scheme: dark`) on first visit.
+- Applies the theme by setting `data-theme` on `<html>`, so the CSS variable overrides above cascade automatically.
+- Persists the user's choice back to `localStorage`, so a manual toggle survives reloads and isn't overwritten by the OS preference.
+
+This keeps theme state in one small hook rather than a global store, since the only consumers are the CSS variable cascade and a toggle button.
 
 ## Reduce-Motion Approach
 
-The app respects reduced-motion preferences by using a lightweight motion hook and conditional animation behavior. When users prefer less motion, transitions and animated effects are minimized to improve comfort and accessibility.
+Motion is opt-out, following the same token/attribute pattern as theming. [useMotion.ts](src/shared/hooks/useMotion.ts) initializes `reduceMotion` from `localStorage`, falling back to the OS-level `prefers-reduced-motion: reduce` media query, and sets `data-motion="reduce"` on `<html>`.
+
+A single global rule in [tokens.css](src/styles/tokens.css) then disables animations, transitions, and smooth scrolling app-wide whenever that attribute is set:
+
+```css
+[data-motion="reduce"] *,
+[data-motion="reduce"] *::before,
+[data-motion="reduce"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+```
+
+The reasoning: rather than threading a `reduceMotion` flag through every animated component, one attribute selector guarantees nothing animated can slip through as new components are added, and it composes with the OS setting or a manual override (persisted like the theme) without extra plumbing.
 
 ## Queue Performance Strategy
 
-The queue is designed to remain responsive even with a large dataset. The implementation uses:
+The request queue ([RequestList.tsx](src/features/requests/components/RequestList.tsx)) is built against a fixture dataset of ~612 requests (12 hand-authored + 600 generated in [requests.ts](src/shared/fixtures/requests.ts)) to validate performance at a realistic-to-larger scale before a real backend exists. The approach:
 
-- Generated fixture data of roughly 600 requests
-- Memoized filtering with `useMemo`
-- Debounced search input updates with a 300 ms delay
-- Lightweight UI state updates to avoid unnecessary re-renders
+- **Row virtualization** with `@tanstack/react-virtual` — only the rows currently in (or near) the viewport are mounted; the container renders a single sized wrapper and absolutely-positions the visible rows via `translateY`, so scrolling ~600 items costs roughly the same as scrolling 20.
+- **Debounced search** via [useDebounce.ts](src/shared/hooks/useDebounce.ts) (300 ms) so filtering doesn't re-run on every keystroke.
+- **Memoized filtering/sorting** ([filterRequests.ts](src/features/requests/utils/filterRequests.ts)) so the filtered/sorted list is only recomputed when the requests, filters, or sort option actually change, not on unrelated re-renders.
+
+Virtualization was chosen over pagination because the queue is meant to feel like one continuously scrollable list (matching how support/helpdesk queues are typically triaged), while still keeping DOM node count — and therefore render/layout cost — flat regardless of dataset size.
