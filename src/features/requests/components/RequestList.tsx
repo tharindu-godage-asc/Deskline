@@ -34,7 +34,7 @@ export function RequestList({
   const rowVirtualizer = useVirtualizer({
     count: requests.length,
     getScrollElement: () => scrollParentRef.current,
-    estimateSize: () => 132,
+    estimateSize: () => 76,
     overscan: 5,
   });
 
@@ -84,7 +84,7 @@ export function RequestList({
                 key={request.id}
                 data-index={virtualRow.index}
                 ref={rowVirtualizer.measureElement}
-                className="pb-3"
+                className="pb-2"
                 style={{
                   position: "absolute",
                   top: 0,
