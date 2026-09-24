@@ -35,7 +35,7 @@ test.describe("Authentication", () => {
     await page.fill("#email","requester@deskline.com");
     await page.fill("#password","wrongpassword");
     await page.getByRole("button", {name: "Sign In",}).click();
-    await expect(page.getByText("Invalid email or password.")).toBeVisible();
+    await expect(page.getByRole("main").getByText("Invalid email or password.")).toBeVisible();
   });
 
   test("invalid email shows authentication error", async ({page,}) => {
@@ -43,7 +43,7 @@ test.describe("Authentication", () => {
     await page.fill("#email","invalid@deskline.com");
     await page.fill("#password","password123");
     await page.getByRole("button", {name: "Sign In",}).click();
-    await expect(page.getByText("Invalid email or password.")).toBeVisible();
+    await expect(page.getByRole("main").getByText("Invalid email or password.")).toBeVisible();
   });
 
   test("logout redirects to login page", async ({page,}) => {
