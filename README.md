@@ -178,6 +178,32 @@ npx playwright test --grep @critical
 
 Note: opening another user's request takes about 7 seconds to show "Access Denied", because React Query retries the failed 403 three times before the error renders. The test allows for this.
 
+**Watching a test run visually**
+
+To run a single spec and actually see the browser:
+
+```bash
+npx playwright test e2e/requests/full-lifecycle.spec.ts --headed --project=chromium
+```
+
+That runs at full speed, so actions fly by. To slow it down, set `SLOWMO` (milliseconds paused after every action, wired up in [playwright.config.ts](playwright.config.ts)) and raise `--timeout`, since a slowed-down run can otherwise exceed the default 30s test timeout:
+
+```bash
+# bash
+SLOWMO=800 npx playwright test e2e/requests/full-lifecycle.spec.ts --headed --project=chromium --timeout=0
+
+# PowerShell
+$env:SLOWMO=800; npx playwright test e2e/requests/full-lifecycle.spec.ts --headed --project=chromium --timeout=0
+```
+
+For step-by-step control instead (pause before each action, inspect the DOM, step forward manually), use the Playwright Inspector:
+
+```bash
+npx playwright test e2e/requests/full-lifecycle.spec.ts --headed --debug
+```
+
+Or use `npm run e2e:ui` for the interactive UI mode, which shows a timeline and DOM snapshot for every action after the run.
+
 ## Why MSW Is Used
 
 Mock Service Worker (MSW) is used to simulate API responses locally without needing a real backend. It's wired up in [main.tsx](src/main.tsx) to start only in dev builds (`import.meta.env.DEV`), so it never ships in production and never has to be manually toggled — it just works after `npm install` + `npm run dev`. This lets frontend development, UI states, and route behavior be exercised reliably while the app stays fully interactive without a live server.

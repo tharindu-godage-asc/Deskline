@@ -22,6 +22,10 @@ export default defineConfig({
     navigationTimeout: 15_000,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    // Set SLOWMO=1500 (ms) to pause after every action when watching a test run headed.
+    launchOptions: {
+      slowMo: process.env.SLOWMO ? Number(process.env.SLOWMO) : undefined,
+    },
   },
 
   projects: [
