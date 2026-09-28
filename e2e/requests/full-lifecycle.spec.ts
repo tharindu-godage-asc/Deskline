@@ -77,9 +77,9 @@ test.describe("Full request lifecycle across roles", { tag: "@critical" }, () =>
       await requestsList.openDetails(title);
       await expect(requestDetail.heading(title)).toBeVisible();
 
-      await requestDetail.comment("Issue Resolved");
+      await requestDetail.comment("I have fixed it now");
       await expect(requestDetail.toast("Comment added.")).toBeVisible();
-      await expect(page.getByText("Issue Resolved", { exact: true })).toBeVisible();
+      await expect(page.getByText("I have fixed it now", { exact: true })).toBeVisible();
 
       await requestDetail.action("Reopen Request").click();
       await expect(requestDetail.toast("Request reopened.")).toBeVisible();
@@ -94,6 +94,10 @@ test.describe("Full request lifecycle across roles", { tag: "@critical" }, () =>
 
       await requestsList.openDetails(title);
       await expect(requestDetail.heading(title)).toBeVisible();
+
+      await requestDetail.comment("Issue Resolved");
+      await expect(requestDetail.toast("Comment added.")).toBeVisible();
+      await expect(page.getByText("Issue Resolved", { exact: true })).toBeVisible();
 
       await requestDetail.action("Close Request").click();
       await expect(page.getByText("Are you sure you want to close this request?")).toBeVisible();
