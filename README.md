@@ -157,18 +157,20 @@ Playwright ([playwright.config.ts](playwright.config.ts)) starts the Vite dev se
 - A `setup` project ([auth.setup.ts](e2e/auth.setup.ts)) logs in once as each role (requester, technician, admin) and saves the session to `.auth/<role>.json` (git-ignored). Specs start already signed in with `test.use({ storageState: users.<role>.storageState })`.
 - Page objects live in [e2e/pages/](e2e/pages/) and are exposed as fixtures in [fixtures.ts](e2e/fixtures.ts). Test accounts are in [support/users.ts](e2e/support/users.ts).
 - The mock API keeps its data in page memory, so a full page reload resets it. Tests navigate inside the app after making changes and never reload.
+- Specs are grouped by feature area: [e2e/auth/](e2e/auth/), [e2e/access-control/](e2e/access-control/) and [e2e/requests/](e2e/requests/).
 
 **Automated workflows**
 
 | # | Workflow | Spec | What it verifies |
 | --- | --- | --- | --- |
-| 1 | **Requester creates a request** — log in, go to My Requests, open New Request, fill the form, submit | [create-request.spec.ts](e2e/create-request.spec.ts) | Submit stays disabled until every field is filled. The toast "Request created successfully." appears and the form resets. After "Back to Requests", the new request is listed as `open`, and its description shows as the first comment on the detail page. |
-| 2 | **Admin triages and closes a request** — log in as admin, open the Queue, open a pending request (seeded r2) | [request-lifecycle.spec.ts](e2e/request-lifecycle.spec.ts) | Assign To Me, Reopen, Set Pending and Add Comment each show the right toast, and the status, assignee and comment update. Close Request asks for confirmation. Once closed, the action buttons are gone and the "Comments are disabled…" text shows. |
-| 3 | **Role-based access and route guards** — anonymous, requester and technician users hit protected URLs | [access-control.spec.ts](e2e/access-control.spec.ts) | Anonymous users are redirected to `/login`. A requester visiting `/queue` lands on `/my-requests`, and opening a request owned by someone else (seeded r7) shows the "Access Denied" state. A technician visiting `/my-requests` or `/requests/new` lands on `/queue`. A requester only sees their own requests, while a technician sees everyone's. |
+| 1 | **Requester creates a request** — log in, go to My Requests, open New Request, fill the form, submit | [create-request.spec.ts](e2e/requests/create-request.spec.ts) | Submit stays disabled until every field is filled. The toast "Request created successfully." appears and the form resets. After "Back to Requests", the new request is listed as `open`, and its description shows as the first comment on the detail page. |
+| 2 | **Admin triages and closes a request** — log in as admin, open the Queue, open a pending request (seeded r2) | [request-lifecycle.spec.ts](e2e/requests/request-lifecycle.spec.ts) | Assign To Me, Reopen, Set Pending and Add Comment each show the right toast, and the status, assignee and comment update. Close Request asks for confirmation. Once closed, the action buttons are gone and the "Comments are disabled…" text shows. |
+| 3 | **Role-based access and route guards** — anonymous, requester and technician users hit protected URLs | [access-control.spec.ts](e2e/access-control/access-control.spec.ts) | Anonymous users are redirected to `/login`. A requester visiting `/queue` lands on `/my-requests`, and opening a request owned by someone else (seeded r7) shows the "Access Denied" state. A technician visiting `/my-requests` or `/requests/new` lands on `/queue`. A requester only sees their own requests, while a technician sees everyone's. |
+| 4 | **Full request lifecycle across roles** — one continuous session: requester creates a request, admin reassigns it to a technician and sets it pending, the technician resolves and reopens it from the queue, admin closes it | [full-lifecycle.spec.ts](e2e/requests/full-lifecycle.spec.ts) | Every status transition the lifecycle allows (open↔pending, open→closed) happens through the right role via in-app login/logout, with no page reload, so the same in-memory request is carried end-to-end. |
 
-The login flow has its own coverage in [auth.spec.ts](e2e/auth.spec.ts): role-based redirects, invalid credentials, required-field and malformed-email validation, logout, and session persistence. One test is marked `fixme`: a signed-in user visiting `/login` is not currently redirected home.
+The login flow has its own coverage in [auth.spec.ts](e2e/auth/auth.spec.ts): role-based redirects, invalid credentials, required-field and malformed-email validation, logout, and session persistence. One test is marked `fixme`: a signed-in user visiting `/login` is not currently redirected home.
 
-The three workflows are tagged `@critical`, so they can be run on their own:
+These workflows are tagged `@critical`, so they can be run on their own:
 
 ```bash
 npx playwright test --grep @critical

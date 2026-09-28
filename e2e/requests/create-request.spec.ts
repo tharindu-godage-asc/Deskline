@@ -1,5 +1,5 @@
-import { test, expect } from "./fixtures";
-import { users } from "./support/users";
+import { test, expect } from "../fixtures";
+import { users } from "../support/users";
 
 test.use({ storageState: users.requester.storageState });
 

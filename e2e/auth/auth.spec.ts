@@ -1,5 +1,5 @@
-import { test, expect } from "./fixtures";
-import { users, type Role } from "./support/users";
+import { test, expect } from "../fixtures";
+import { users, type Role } from "../support/users";
 
 test.describe("Authentication", () => {
   test.beforeEach(async ({ loginPage }) => {

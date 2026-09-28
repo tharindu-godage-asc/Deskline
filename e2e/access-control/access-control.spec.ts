@@ -1,5 +1,5 @@
-import { test, expect } from "./fixtures";
-import { users } from "./support/users";
+import { test, expect } from "../fixtures";
+import { users } from "../support/users";
 
 // Seeded r7 ("VPN not connecting") belongs to the technician (user-2);
 // seeded r2 ("VPN not connecting-asignn test") belongs to the requester (user-1).
