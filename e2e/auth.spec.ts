@@ -35,11 +35,14 @@ test.describe("Authentication", () => {
     await expect(page).toHaveURL(/login/);
   });
 
-  test("malformed email shows a validation error", async ({ loginPage }) => {
+  test("malformed email is blocked by browser validation", async ({ page, loginPage }) => {
+    // type="email" makes the browser stop the submit, so the Zod message never renders.
     await loginPage.email.fill("not-an-email");
     await loginPage.password.fill("password123");
     await loginPage.signIn.click();
-    await expect(loginPage.fieldError("Enter a valid email")).toBeVisible();
+    expect(await loginPage.email.evaluate((el: HTMLInputElement) => el.validity.typeMismatch)).toBe(true);
+    await expect(page).toHaveURL(/login/);
+    await expect(loginPage.authError).toHaveCount(0);
   });
 
   test("logout redirects to login page", async ({ page, loginPage }) => {

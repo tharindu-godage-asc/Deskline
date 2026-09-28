@@ -4,10 +4,19 @@ import { expect, type Locator, type Page } from "@playwright/test";
 export class RequestsListPage {
   readonly search: Locator;
   readonly newRequestButton: Locator;
+  /** Not wired to a <label>, so found by its unique "Me" option instead of getByLabel. */
+  readonly assigneeFilter: Locator;
 
   constructor(private readonly page: Page) {
     this.search = page.getByPlaceholder("Search by title...");
     this.newRequestButton = page.getByRole("button", { name: "New Request" });
+    this.assigneeFilter = page
+      .locator("select")
+      .filter({ has: page.getByRole("option", { name: "Me", exact: true }) });
+  }
+
+  async filterAssignedToMe() {
+    await this.assigneeFilter.selectOption("me");
   }
 
   async gotoMyRequests() {
